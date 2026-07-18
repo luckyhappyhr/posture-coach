@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>쑥쑥 자세나무</title>
+<title>바른자세 센터 키우기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
@@ -31,7 +31,6 @@
   .pill.on{ color:var(--green); border-color:var(--green); background:var(--green-soft); }
 
   .hero{ background:var(--card); border:1.5px solid var(--line); border-radius:var(--round); padding:14px 16px; display:flex; align-items:center; gap:14px; margin-bottom:12px; box-shadow:0 4px 14px rgba(63,178,127,.08); }
-  .heroEmoji{ font-size:44px; line-height:1; flex-shrink:0; animation:bounce 2.6s ease-in-out infinite; transform-origin:50% 90%; }
   @keyframes bounce{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07) translateY(-3px); } }
   .heroBody{ flex:1; min-width:0; }
   .heroTitle{ font-family:var(--jua); font-size:19px; }
@@ -39,6 +38,16 @@
   .barTrack{ height:12px; background:var(--green-soft); border-radius:999px; margin:7px 0 5px; overflow:hidden; }
   .barFill{ height:100%; width:0%; background:linear-gradient(90deg,var(--green),#6BD8A8); border-radius:999px; transition:width .6s ease; }
   .heroNext{ font-size:12px; color:var(--muted); font-weight:600; }
+  .centerScene{ background:linear-gradient(#E3F3FF,#F3FAF4 72%); border:1.5px solid var(--line); border-radius:16px; padding:8px 12px 0; text-align:center; }
+  .sky{ font-size:14px; text-align:right; opacity:.8; }
+  .roofSign{ display:none; font-family:var(--jua); font-size:13px; background:#FFF3D6; border:1.5px solid var(--sun); border-radius:10px; padding:4px 10px; margin:2px auto 4px; width:fit-content; }
+  .floor{ background:#FFFDF6; border:1.5px solid #EADFC8; border-radius:10px; margin:4px auto; padding:6px 10px; font-size:22px; letter-spacing:2px; max-width:290px; }
+  .floor.pop{ animation:popIn .5s ease; }
+  @keyframes popIn{ 0%{ transform:scale(.6); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  .ground{ height:5px; background:#8FBF8F; border-radius:99px; margin:6px -12px 0; }
+  .basementF{ background:#EFEAE2; border-style:dashed; opacity:.95; margin-top:6px; margin-bottom:12px; }
+  .centerDesc{ font-size:12.5px; color:var(--muted); font-family:var(--sans); font-weight:600; margin-left:8px; }
+  .pts{ color:var(--green); font-family:var(--jua); }
 
   .stage{ position:relative; width:100%; aspect-ratio:3/4; max-height:60vh; background:#0d1712; border-radius:24px; overflow:hidden; outline:5px solid var(--line); outline-offset:-5px; transition:outline-color .35s ease; }
   @media (min-width:560px){ .stage{ aspect-ratio:4/3; } }
@@ -47,7 +56,7 @@
   .stage.info{ outline-color:var(--sky); }
   @keyframes breath{ 0%,100%{ outline-width:5px; } 50%{ outline-width:9px; } }
   @keyframes alarm{ 0%,100%{ outline-width:6px; } 50%{ outline-width:12px; } }
-  @media (prefers-reduced-motion: reduce){ .stage.good,.stage.bad,.heroEmoji{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .stage.good,.stage.bad{ animation:none; } }
   .stage video,.stage canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .stage .mirror{ transform:scaleX(-1); }
 
@@ -125,29 +134,36 @@
 <body>
 
 <header class="top">
-  <div class="brand">쑥쑥 <span>자세나무</span> 🌱</div>
+  <div class="brand">바른자세 <span>센터 키우기</span> 🏢</div>
   <div class="pill" id="pillState">쉬는 중</div>
 </header>
 
-<div class="hero">
-  <div class="heroEmoji" id="heroEmoji">🌱</div>
-  <div class="heroBody">
-    <div class="heroTitle"><b id="heroLv">Lv.1</b><span id="heroName">꼬물꼬물 새싹</span></div>
-    <div class="barTrack"><div class="barFill" id="heroBarFill"></div></div>
-    <div class="heroNext" id="heroNext">바른 자세로 나무에 물을 줘요!</div>
+<div class="hero" style="flex-direction:column; align-items:stretch; gap:10px;">
+  <div class="centerScene">
+    <div class="sky">⛅ ☁️</div>
+    <div class="roofSign" id="roofSign">🏥 바른자세 헬스케어센터</div>
+    <div id="floors"></div>
+    <div class="ground"></div>
+    <div class="floor basementF" id="basement">🧘</div>
   </div>
+  <div class="heroBody">
+    <div class="heroTitle"><b id="centerName">지하 연습방</b><span id="centerDesc" class="centerDesc"></span></div>
+    <div class="barTrack"><div class="barFill" id="upgradeBar"></div></div>
+    <div class="heroNext"><span id="upgradeHint">바른 자세로 포인트를 모아요!</span> · 보유 <b id="ptsNow" class="pts">0P</b></div>
+  </div>
+  <button class="primary" id="upgradeBtn" style="display:none">🔨 확장</button>
 </div>
 
 <div class="stage info" id="stage">
   <video id="cam" class="mirror" playsinline muted></video>
   <canvas id="overlay" class="mirror"></canvas>
   <div class="placeholder" id="placeholder">
-    <div class="big">🌳✨</div>
-    <h2>바른 자세로 나무를 키워요!</h2>
+    <div class="big">🏢✨</div>
+    <h2>바른 자세로 센터를 키워요!</h2>
     <p>카메라는 <b>살짝 비스듬한 옆모습</b>이 최고예요!<br>
        (귀-어깨-골반 줄서기 + 짝다리까지 다 보여요)<br><br>
-       ① <b>시작</b>을 콕! → ② 바른 자세를 잡으면<br>
-       ③ 셋, 둘, 하나… 자동으로 찰칵! 📸 저장돼요 💚</p>
+       바른 자세를 오래 지킬수록 포인트가 쌓이고<br>
+       지하 홈트방이 헬스케어센터로 자라나요! 💚</p>
   </div>
   <div class="banner" id="banner"></div>
 </div>
@@ -176,7 +192,7 @@
 
 <div class="stats">
   <div class="stat"><b id="statSession">0분 0초</b><span>이번 바른자세 시간</span></div>
-  <div class="stat"><b id="statStars">⭐ 0</b><span>모은 별</span></div>
+  <div class="stat"><b id="statStars">+0P</b><span>오늘 번 포인트</span></div>
   <div class="stat"><b id="statStreak">0초</b><span>연속 기록</span></div>
 </div>
 
@@ -259,7 +275,7 @@
     </div>
     <div class="miniBtns">
       <button id="btnTestVoice">🔊 목소리 듣기</button>
-      <button id="btnResetScore">🌱 나무 새로 심기</button>
+      <button id="btnResetScore">🏚️ 처음부터 다시 짓기</button>
     </div>
     <div>
       <h3 style="margin-bottom:4px">🔍 실시간 지표 (어른용)</h3>
@@ -268,7 +284,7 @@
   </div>
 </details>
 
-<p class="foot">카메라 영상과 자세 정보는 어디에도 저장·전송되지 않아요.<br>기기에는 <b>바른 자세 누적 시간(나무 성장 기록)</b> 딱 하나만 남아요. 🌳</p>
+<p class="foot">카메라 영상과 자세 정보는 어디에도 저장·전송되지 않아요.<br>기기에는 <b>센터 진행상황(포인트·건물 단계·누적 시간)</b>만 남아요. 🏢</p>
 
 <script type="module">
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
@@ -276,7 +292,8 @@ import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdel
 /* ───────── 상수 ───────── */
 const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
 const MODEL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
-const KEY = "postureTree.growth";
+const KEY = "postureCenter.v1";
+const OLD_KEY = "postureTree.growth";
 const I = { NOSE:0, LEAR:7, REAR:8, LSH:11, RSH:12, LHIP:23, RHIP:24, LKNEE:25, RKNEE:26, LANK:27, RANK:28 };
 
 /* 절대 한계 — 기준과 무관하게 명백히 나쁜 자세 (모니터링용) */
@@ -288,27 +305,23 @@ const GATE = {
   stand: { kneeAsym:12 },
 };
 
-/* ───────── 레벨 ───────── */
-const LEVELS = [
-  { min:0,    emoji:"🌱", name:"꼬물꼬물 새싹" },
-  { min:10,   emoji:"🌿", name:"쑥쑥 풀잎" },
-  { min:30,   emoji:"🪴", name:"튼튼 화분" },
-  { min:60,   emoji:"🌳", name:"씩씩한 꼬마나무" },
-  { min:120,  emoji:"🌲", name:"늠름한 큰나무" },
-  { min:240,  emoji:"🌸", name:"활짝 꽃나무" },
-  { min:420,  emoji:"🌟", name:"반짝반짝 별나무" },
-  { min:600,  emoji:"🌈", name:"무지개 숲 지킴이" },
-  { min:900,  emoji:"👑", name:"자세 왕" },
-  { min:1200, emoji:"🏆", name:"전설의 자세 마스터" },
+/* ───────── 센터 성장 단계 (타이쿤) ───────── */
+const STAGES = [
+  { cost:0,    name:"지하 연습방",          desc:"매트 한 장으로 시작!",         floors:[],                                              basement:"🧘🟩" },
+  { cost:300,  name:"지하 스튜디오",        desc:"거울과 음악이 생겼어요",        floors:[],                                              basement:"🎵🧘🪞" },
+  { cost:800,  name:"1층 자세 교실",        desc:"첫 수강생 세 명!",             floors:["🧍🧍🧍🚪"],                                     basement:"🧘🪞" },
+  { cost:1600, name:"1층 넓은 교실",        desc:"소문 듣고 수강생이 늘었어요",    floors:["🧍🧍🧍🧍🧍🚪"],                                 basement:"🧘🪞" },
+  { cost:3000, name:"2층 스튜디오",         desc:"요가·스트레칭 반 개설!",        floors:["🤸🧘🧎","🧍🧍🧍🧍🚪"],                          basement:"📦🧘" },
+  { cost:5000, name:"3층 필라테스관",       desc:"기구 필라테스까지 들어왔어요!",  floors:["🧘‍♀️🛠️🧘","🤸🧎🧍","🧍🧍🧍🧍🚪"],               basement:"📦" },
+  { cost:8000, name:"바른자세 헬스케어센터", desc:"건물 전체가 우리 센터! 완공!",  floors:["🌳🪴☀️","💆🧘‍♀️🧘","🤸🧎🧍🧍","🧍🧍🧍🧍🚪"],    basement:"🏋️" },
 ];
-const levelIdx = mins => { let i=0; for(let j=0;j<LEVELS.length;j++) if(mins>=LEVELS[j].min) i=j; return i; };
 
 /* ───────── 귀여운 멘트 ───────── */
 const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 const GREETINGS = [
-  "안녕하세요! 오늘도 바른 자세, 함께 만들어 봐요!",
-  "자세나무에 물 주러 오셨군요! 바르게 앉으면 나무가 쑥쑥 자라요!",
-  "반가워요! 허리를 펴면 별이 반짝반짝 모여요!",
+  "안녕하세요, 원장님! 오늘도 바른 자세로 센터를 키워 봐요!",
+  "수강생들이 원장님을 기다려요! 바르게 앉으면 포인트가 쌓여요!",
+  "반가워요! 허리를 펴면 센터가 쑥쑥 자라나요!",
 ];
 const RULE_LINES = {
   turtle: [
@@ -350,10 +363,13 @@ const RULE_LINES = {
     "몸이 한쪽으로 쏠렸어요. 씩씩하게 균형을 잡아요!",
   ],
 };
-const PRAISES = m => [
-  `우와! ${m}분째 바른 자세예요! 정말 멋져요!`,
-  `대단해요! ${m}분 동안 곧게 지켰어요! 나무가 좋아해요!`,
-  `짝짝짝! ${m}분 달성! 자세나무가 쑥쑥 자라고 있어요!`,
+/* ───────── 자세 챌린지: 연속 유지 시간마다 포인트! (초반은 쉽게) ───────── */
+const CHALLENGE = [
+  { t:5,  p:5  },
+  { t:10, p:10 },
+  { t:20, p:20 },
+  { t:30, p:30 },
+  { t:60, p:60 },
 ];
 /* 어깨를 내린 '다음' 등을 다시 세우도록 순서를 짰어요 */
 const CAL_SIT = [
@@ -385,15 +401,25 @@ const GATE_FIX = {
   headRoll: "고개가 갸웃 기울었어요. 반듯하게 세워 볼까요?",
 };
 
-/* ───────── 저장: 누적 바른자세 시간 하나 ───────── */
-const loadGrowth = () => { try{ return Math.max(0, Number(JSON.parse(localStorage.getItem(KEY)||"0"))||0); }catch(e){ return 0; } };
-const saveGrowth = () => { try{ localStorage.setItem(KEY, JSON.stringify(Math.round(totalGood))); }catch(e){} };
+/* ───────── 저장: 센터 진행상황 (포인트·건물 단계·누적 시간) ───────── */
+function loadGame(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||"null");
+    if(d) return { pts:Math.max(0,+d.pts||0), stage:Math.min(STAGES.length-1, Math.max(0,+d.stage||0)), tg:Math.max(0,+d.tg||0), tut:!!d.tut };
+  }catch(e){}
+  try{ /* 예전 '자세나무' 기록이 있으면 포인트로 이사와요 */
+    const old=Math.max(0, Number(JSON.parse(localStorage.getItem(OLD_KEY)||"0"))||0);
+    if(old>0) return { pts:Math.floor(old/5), stage:0, tg:old, tut:true };
+  }catch(e){}
+  return { pts:0, stage:0, tg:0, tut:false };
+}
+function saveGame(){ try{ localStorage.setItem(KEY, JSON.stringify({ pts:Math.floor(game.pts), stage:game.stage, tg:Math.round(game.tg), tut:game.tut })); }catch(e){} }
 
 /* ───────── 상태 ───────── */
 const settings = { sens:5, sustain:2, cooldown:15, voice:true, gate:1.35 };
 const baselines = { sit:null, stand:null };
-let totalGood = loadGrowth();
-let curLevel = levelIdx(totalGood/60);
+let game = loadGame();
+let sessionPts = 0;
 
 let landmarker=null, stream=null, running=false, facing="user";
 let wakeLock=null, audioCtx=null;
@@ -401,8 +427,7 @@ let stance="sit", view="front";
 let ema=null, lastFrameT=0, calibrating=false, calibBuf=null;
 let scripting=false, autoHold=0, cdT=-1, cdSpoken=-1, lastHint=0, lastCancel=0, armedKey="";
 let waitT=0, bestScore=Infinity, bestM=null;
-let sessionGood=0, streak=0, badHold=0, milestoneIdx=0, bannerTimer=0;
-const MILESTONES = [60,180,300,600,900,1200,1800,2700,3600];
+let sessionGood=0, streak=0, badHold=0, comboIdx=0, bannerTimer=0;
 
 /* ───────── 엘리먼트 ───────── */
 const $ = id => document.getElementById(id);
@@ -583,23 +608,41 @@ function speak(text, pre){
 }
 
 /* ───────── 레벨/성장 ───────── */
-function updateHero(){
-  const mins=totalGood/60;
-  const li=levelIdx(mins);
-  const L=LEVELS[li], N=LEVELS[li+1];
-  $("heroEmoji").textContent=L.emoji;
-  $("heroLv").textContent=`Lv.${li+1}`;
-  $("heroName").textContent=L.name;
-  if(N){
-    const span=N.min-L.min, done=mins-L.min;
-    $("heroBarFill").style.width=Math.min(100, done/span*100)+"%";
-    const remain=Math.max(0, Math.ceil(N.min-mins));
-    $("heroNext").textContent=`다음 레벨 ${N.emoji} ${N.name}까지 바른 자세 ${remain}분!`;
+function renderCenter(){
+  const s=STAGES[game.stage], n=STAGES[game.stage+1];
+  $("centerName").textContent=s.name;
+  $("centerDesc").textContent=s.desc;
+  $("ptsNow").textContent=Math.floor(game.pts).toLocaleString()+"P";
+  const fl=$("floors");
+  if(fl.childElementCount!==s.floors.length){
+    fl.innerHTML="";
+    s.floors.forEach(f=>{ const d=document.createElement("div"); d.className="floor pop"; d.textContent=f; fl.appendChild(d); });
+  }
+  $("basement").textContent=s.basement;
+  $("roofSign").style.display = game.stage===STAGES.length-1 ? "block" : "none";
+  const btn=$("upgradeBtn");
+  if(n){
+    btn.style.display="";
+    const ok=game.pts>=n.cost;
+    btn.disabled=!ok;
+    btn.textContent=`🔨 ${n.name}(으)로 확장 — ${n.cost.toLocaleString()}P`;
+    $("upgradeBar").style.width=Math.min(100, game.pts/n.cost*100)+"%";
+    $("upgradeHint").textContent= ok ? "확장할 수 있어요! 버튼을 콕!" : `다음 확장까지 ${(n.cost-Math.floor(game.pts)).toLocaleString()}P`;
   } else {
-    $("heroBarFill").style.width="100%";
-    $("heroNext").textContent="최고 레벨이에요! 자세의 전설이 되었어요! 🎉";
+    btn.style.display="none";
+    $("upgradeBar").style.width="100%";
+    $("upgradeHint").textContent="🎉 완공! 온 동네가 바른 자세 명소예요!";
   }
 }
+$("upgradeBtn").addEventListener("click", ()=>{
+  const n=STAGES[game.stage+1];
+  if(!n || game.pts<n.cost) return;
+  game.pts-=n.cost; game.stage++; saveGame();
+  confetti();
+  showBanner(`🏗️ 공사 완료! ${n.name}!`, "praise", 4500);
+  speak(`공사 완료! ${n.name}까지 커졌어요! 수강생들이 정말 좋아해요!`, "fanfare");
+  renderCenter();
+});
 function confetti(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const host=document.createElement("div");
@@ -619,24 +662,28 @@ function confetti(){
   }
   setTimeout(()=>host.remove(), 4200);
 }
-function checkLevelUp(){
-  const li=levelIdx(totalGood/60);
-  if(li>curLevel){
-    curLevel=li;
-    const L=LEVELS[li];
-    updateHero(); confetti();
-    showBanner(`🎉 레벨 업! ${L.emoji} ${L.name}`, "praise", 5000);
-    speak(`레벨 업! ${L.name}까지 자랐어요! 정말 대단해요!`, "fanfare");
-    saveGrowth();
-  }
+function addPts(n, line){
+  game.pts+=n; sessionPts+=n; saveGame();
+  showBanner(`⭐ +${n}P — ${line}`, "praise", 3400);
+  speak(line, "chime");
+  renderCenter();
 }
-function checkMilestones(){
-  if(milestoneIdx<MILESTONES.length && streak>=MILESTONES[milestoneIdx]){
-    const m=Math.round(MILESTONES[milestoneIdx]/60);
-    milestoneIdx++;
-    const line=pick(PRAISES(m));
-    showBanner(`💛 ${line}`, "praise", 4000);
-    speak(line, "chime");
+function checkChallenge(){
+  if(comboIdx<CHALLENGE.length){
+    const c=CHALLENGE[comboIdx];
+    if(streak>=c.t){
+      comboIdx++;
+      let bonus=c.p;
+      let line=(c.t>=60?"1분":c.t+"초")+` 성공! ${bonus}포인트!`;
+      if(!game.tut){ game.tut=true; bonus+=50; line=`튜토리얼 완료! 보너스까지 ${bonus}포인트!`; }
+      addPts(bonus, line);
+    }
+  } else {
+    const nextT = 60 + (comboIdx - CHALLENGE.length + 1) * 60;  /* 이후 1분마다 */
+    if(streak>=nextT){
+      comboIdx++;
+      addPts(60, `${Math.round(nextT/60)}분 연속! 60포인트!`);
+    }
   }
 }
 
@@ -773,12 +820,12 @@ function processFrame(lm, dt){
   }
 
   if(active.length===0){
-    sessionGood+=dt; totalGood+=dt; streak+=dt; badHold=0;
-    checkMilestones(); checkLevelUp();
-    setState("good","참 잘하고 있어요!","바른 자세 유지 중 — 나무가 자라나요 🌱");
+    sessionGood+=dt; game.tg+=dt; game.pts+=dt/5; streak+=dt; badHold=0;
+    checkChallenge();
+    setState("good","참 잘하고 있어요!","바른 자세 유지 중 — 포인트가 쌓여요 ⭐");
   } else {
     badHold+=dt;
-    if(badHold>1.5){ streak=0; milestoneIdx=0; }
+    if(badHold>1.5){ streak=0; comboIdx=0; }
     setState("bad","자세를 고쳐 볼까요?", active.length>1?`고칠 곳이 ${active.length}군데 있어요`:"코치의 말을 들어 보세요!");
   }
 }
@@ -856,10 +903,10 @@ async function startCamera(){
 }
 async function grabWakeLock(){ try{ wakeLock=await navigator.wakeLock.request("screen"); }catch(e){} }
 document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState==="hidden") saveGrowth();
+  if(document.visibilityState==="hidden") saveGame();
   else if(running) grabWakeLock();
 });
-window.addEventListener("pagehide", saveGrowth);
+window.addEventListener("pagehide", saveGame);
 
 function cameraError(e){
   let msg="카메라를 열 수 없어요.";
@@ -874,10 +921,10 @@ function cameraError(e){
 /* ───────── 시작/정지 ───────── */
 btnStart.addEventListener("click", async ()=>{
   if(running){
-    running=false; saveGrowth();
+    running=false; saveGame();
     if(stream)stream.getTracks().forEach(t=>t.stop());
     if(wakeLock){ try{ wakeLock.release(); }catch(e){} wakeLock=null; }
-    streak=0; badHold=0; milestoneIdx=0;
+    streak=0; badHold=0; comboIdx=0;
     btnStart.textContent="시작"; btnStart.classList.remove("stop");
     btnCalib.disabled=true; btnFlip.disabled=true;
     pill.textContent="쉬는 중"; pill.classList.remove("on");
@@ -987,22 +1034,23 @@ $("setVoice").checked=settings.voice;
 $("setVoice").addEventListener("change", e=>{ settings.voice=e.target.checked; });
 $("btnTestVoice").addEventListener("click", ()=>{ ensureAudio(); speak("안녕하세요! 등을 쭉 펴 볼까요?", "chime"); });
 $("btnResetScore").addEventListener("click", ()=>{
-  if(!confirm("정말 나무를 새로 심을까요? 지금까지 키운 기록이 사라져요!"))return;
-  totalGood=0; sessionGood=0; streak=0; milestoneIdx=0;
-  curLevel=0; saveGrowth(); updateHero();
-  showBanner("새 씨앗을 심었어요! 다시 키워 봐요 🌱", "info");
+  if(!confirm("정말 센터를 처음부터 다시 지을까요? 포인트와 건물이 모두 사라져요!"))return;
+  game={ pts:0, stage:0, tg:0, tut:false };
+  sessionGood=0; sessionPts=0; streak=0; comboIdx=0;
+  saveGame(); renderCenter();
+  showBanner("빈 터에 첫 매트를 깔았어요! 다시 시작해요 🧘", "info");
 });
 
 /* ───────── 1초 통계 갱신 & 주기 저장 ───────── */
 setInterval(()=>{
   $("statSession").textContent=fmtMS(sessionGood);
-  $("statStars").textContent="⭐ "+Math.floor(totalGood/10);
+  $("statStars").textContent="+"+Math.floor(sessionPts)+"P";
   $("statStreak").textContent=streak>=60?fmtMS(streak):Math.floor(streak)+"초";
-  updateHero();
+  renderCenter();
 }, 1000);
-setInterval(()=>{ if(running)saveGrowth(); }, 20000);
+setInterval(()=>{ if(running)saveGame(); }, 20000);
 
-updateHero();
+renderCenter();
 try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){}
 </script>
 </body>
