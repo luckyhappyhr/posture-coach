@@ -140,8 +140,8 @@
     <h2>바른 자세로 나무를 키워요!</h2>
     <p>카메라는 <b>살짝 비스듬한 옆모습</b>이 최고예요!<br>
        (귀-어깨-골반 줄서기 + 짝다리까지 다 보여요)<br><br>
-       ① <b>시작</b>을 콕! → ② 바른 자세로 <b>기준 저장</b><br>
-       ③ 합격해야만 저장돼요 — 코치가 도와줄게요 💚</p>
+       ① <b>시작</b>을 콕! → ② 바른 자세를 잡으면<br>
+       ③ 셋, 둘, 하나… 자동으로 찰칵! 📸 저장돼요 💚</p>
   </div>
   <div class="banner" id="banner"></div>
 </div>
@@ -160,7 +160,7 @@
 
 <div class="controls">
   <button class="primary" id="btnStart">시작</button>
-  <button id="btnCalib" disabled>기준 저장</button>
+  <button id="btnCalib" disabled>자세 연습</button>
   <button id="btnFlip" disabled>카메라 전환</button>
 </div>
 
@@ -381,6 +381,7 @@ let landmarker=null, stream=null, running=false, facing="user";
 let wakeLock=null, audioCtx=null;
 let stance="sit", stanceTimer=0, view="front";
 let ema=null, lastFrameT=0, calibrating=false, calibBuf=null;
+let scripting=false, autoHold=0, cdT=-1, cdSpoken=-1, lastHint=0, lastCancel=0, armedKey="";
 let sessionGood=0, streak=0, badHold=0, milestoneIdx=0, bannerTimer=0;
 const MILESTONES = [60,180,300,600,900,1200,1800,2700,3600];
 
@@ -627,6 +628,81 @@ function fire(rule){
 }
 
 /* ───────── 프레임 처리 ───────── */
+/* ───────── 자동 기준 저장: 자세가 합격이면 셋-둘-하나-찰칵! ───────── */
+function cancelCountdown(sayIt){
+  if(cdT>=0){
+    cdT=-1; cdSpoken=-1; autoHold=0;
+    const now=performance.now();
+    if(sayIt && now-lastCancel>6000){
+      lastCancel=now;
+      showBanner("앗, 조금 움직였어요! 다시 자세를 잡아 봐요~", "bad", 2600);
+      speak("앗, 조금 움직였어요! 다시 자세를 잡아 봐요!");
+    }
+  }
+}
+async function doAutoCapture(){
+  showBanner("📸 찰칵! 기억하는 중…", "info", 1800);
+  speak("찰칵!", "chime");
+  const b=await captureOnce();
+  cdT=-1; cdSpoken=-1; autoHold=0;
+  if(!b) return;
+  if(gateCheck(b).length>0){
+    showBanner("조금 흔들렸어요. 다시 한번 자세를 잡아 봐요!", "bad", 2800);
+    return;
+  }
+  baselines[stance]=b;
+  rules.forEach(r=>{ r.acc=0; });
+  armedKey="";
+  const label=stance==="sit"?"앉은":"선";
+  showBanner(`✅ 합격! ${label} 자세를 기억했어요!`, "praise", 4000);
+  speak("합격이에요! 완벽한 자세를 기억할게요. 이제 함께 지켜봐요!", "chime");
+}
+function autoCalTick(m, dt){
+  if(scripting || calibrating) return;
+  const key=`${stance}|${view}`;
+  if(armedKey!==key){
+    armedKey=key; autoHold=0; cdT=-1; cdSpoken=-1;
+    const label=stance==="sit"?"앉은":"선";
+    showBanner(`이제 ${label} 자세를 기억할 차례예요!`, "info", 3200);
+    speak(`이제 ${label} 자세를 기억할 차례예요! 바른 자세를 잡으면 자동으로 찰칵 할게요!`, "chime");
+    lastHint=performance.now();
+  }
+  const fails=gateCheck({...m, view, stance});
+  const now=performance.now();
+
+  if(cdT>=0){ /* 카운트다운 진행 중 */
+    if(fails.length>0){ cancelCountdown(true); }
+    else{
+      cdT+=dt;
+      const n=Math.floor(cdT);
+      if(n!==cdSpoken && n<3){
+        cdSpoken=n;
+        const word=["셋","둘","하나"][n];
+        showBanner(`그대로~ ${word}!`, "praise", 1100);
+        speak(word);
+      }
+      if(cdT>=3){ cdT=-1; doAutoCapture(); }
+    }
+    setState("good","그대로 멈춰요!","곧 찰칵 할 거예요 📸");
+    return;
+  }
+
+  if(fails.length===0){
+    autoHold+=dt;
+    setState("good","우와, 좋아요!","그대로만 있어 주세요…");
+    if(autoHold>=1.2){ cdT=0; cdSpoken=-1; }
+  } else {
+    autoHold=Math.max(0, autoHold-dt*2);
+    const fix=GATE_FIX[fails[0]];
+    setState("info","바른 자세를 잡아 봐요!", fix);
+    if(now-lastHint>12000){
+      lastHint=now;
+      showBanner(`🔍 ${fix}`, "info", 3600);
+      speak(fix);
+    }
+  }
+}
+
 function processFrame(lm, dt){
   const m=smooth(computeMetrics(lm));
   updateStanceView(m, dt);
@@ -639,14 +715,7 @@ function processFrame(lm, dt){
   if(calibrating){ if(calibBuf)calibBuf.push({...m}); return; }
 
   const b=baselines[stance];
-  if(!b){
-    setState("info","기준을 저장해 주세요", `바른 ${stance==="sit"?"앉은":"선"} 자세로 '기준 저장'을 콕!`);
-    return;
-  }
-  if(b.view!==view){
-    setState("info","카메라 각도가 바뀌었어요","'기준 저장'을 다시 한번 눌러 주세요!");
-    return;
-  }
+  if(!b || b.view!==view){ autoCalTick(m, dt); return; }
 
   const k=kOf();
   const active=rules.filter(r=>r.when(m,b,k));
@@ -669,6 +738,7 @@ function processFrame(lm, dt){
   }
 }
 function noPerson(){
+  cancelCountdown(false); autoHold=0;
   setState("info","어디 갔어요~?","몸이 화면에 보이게 해 주세요!");
   diag.textContent="관절 미검출";
 }
@@ -783,8 +853,8 @@ btnStart.addEventListener("click", async ()=>{
   ensureAudio();
   speak(pick(GREETINGS), "chime");
   const b=baselines[stance];
-  setState(b?"good":"info", b?"관찰 시작!":"기준을 저장해 주세요",
-           b?"":"바른 자세를 잡고 '기준 저장'을 콕!");
+  setState(b?"good":"info", b?"관찰 시작!":"자세를 기억할 준비!",
+           b?"":"바른 자세를 잡으면 자동으로 찰칵!");
   requestAnimationFrame(loop);
 });
 
@@ -810,44 +880,22 @@ async function captureOnce(){
   calibBuf=null;
   return b;
 }
+/* ───────── '자세 연습' 버튼: 차근차근 안내 후 자동 찰칵 대기 ───────── */
 btnCalib.addEventListener("click", async ()=>{
-  if(!running||calibrating)return;
-  btnCalib.disabled=true;
+  if(!running||calibrating||scripting)return;
+  btnCalib.disabled=true; scripting=true;
+  baselines[stance]=null; armedKey=""; cancelCountdown(false);
   const script = stance==="sit" ? CAL_SIT : CAL_STAND;
   for(let i=0;i<script.length;i++){
     showBanner(script[i], "info", 2600);
     speak(script[i], i===0?"chime":null);
     await sleep(i===script.length-1 ? 1400 : 2700);
   }
-  let saved=false;
-  for(let attempt=1; attempt<=3; attempt++){
-    showBanner("찰칵! 검사하는 중…", "info", 1800);
-    const b=await captureOnce();
-    if(!b){
-      showBanner("앗, 몸이 잘 안 보여요. 카메라를 확인해 주세요!", "bad");
-      speak("몸이 잘 안 보여요. 카메라를 확인해 주세요!", "beep");
-      break;
-    }
-    const fails=gateCheck(b);
-    if(fails.length===0){
-      baselines[stance]=b;
-      rules.forEach(r=>{ r.acc=0; });
-      const label=stance==="sit"?"앉은":"선";
-      showBanner(`✅ 합격! ${label} 자세를 기억했어요!`, "praise");
-      speak("합격이에요! 완벽한 자세를 기억할게요. 이제 함께 지켜봐요!", "chime");
-      saved=true;
-      break;
-    }
-    const fix=GATE_FIX[fails[0]];
-    if(attempt<3){
-      showBanner(`🔍 ${fix}`, "bad", 4200);
-      speak(fix + " 삼 초 뒤에 다시 찍을게요!", "beep");
-      await sleep(4200);
-    } else {
-      showBanner("조금 쉬었다가 다시 도전해요! 비법 노트를 참고해 보세요", "bad", 4500);
-      speak(fix + " 조금 쉬었다가 다시 도전해요!", "beep");
-    }
-  }
+  scripting=false;
+  armedKey=`${stance}|${view}`;
+  lastHint=performance.now();
+  showBanner("이제 그대로~ 자세가 예쁘면 자동으로 찰칵 할게요!", "info", 3600);
+  speak("이제 그대로! 자세가 예쁘면 자동으로 찰칵 할게요!");
   btnCalib.disabled=false;
 });
 
