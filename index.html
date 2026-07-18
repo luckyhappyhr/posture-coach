@@ -10,19 +10,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>
   :root{
-    --bg:#F3FAF4;         /* 연한 민트 크림 */
-    --card:#FFFFFF;
-    --line:#DFEEE2;
-    --ink:#25443B;
-    --muted:#7FA294;
-    --green:#3FB27F;
-    --green-soft:#DFF5EA;
-    --coral:#FF8B7A;
-    --coral-soft:#FFE9E5;
-    --sun:#FFC94D;
-    --sky:#6FB9F2;
-    --sky-soft:#E4F2FD;
-    --round:20px;
+    --bg:#F3FAF4; --card:#FFFFFF; --line:#DFEEE2; --ink:#25443B; --muted:#7FA294;
+    --green:#3FB27F; --green-soft:#DFF5EA; --coral:#FF8B7A; --coral-soft:#FFE9E5;
+    --sun:#FFC94D; --sky:#6FB9F2; --sky-soft:#E4F2FD; --round:20px;
     --jua:"Jua", "Pretendard Variable", sans-serif;
     --sans:"Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   }
@@ -34,26 +24,14 @@
     padding:14px 14px calc(24px + env(safe-area-inset-bottom));
     max-width:720px; margin:0 auto;
   }
-
   .top{ display:flex; align-items:center; justify-content:space-between; margin:2px 2px 12px; }
   .brand{ font-family:var(--jua); font-size:21px; letter-spacing:-0.01em; }
   .brand span{ color:var(--green); }
-  .pill{
-    font-size:12px; color:var(--muted); background:var(--card);
-    border:1.5px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; font-weight:600;
-  }
+  .pill{ font-size:12px; color:var(--muted); background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; font-weight:600; }
   .pill.on{ color:var(--green); border-color:var(--green); background:var(--green-soft); }
 
-  /* ── 자세나무 레벨 카드 ── */
-  .hero{
-    background:var(--card); border:1.5px solid var(--line); border-radius:var(--round);
-    padding:14px 16px; display:flex; align-items:center; gap:14px; margin-bottom:12px;
-    box-shadow:0 4px 14px rgba(63,178,127,.08);
-  }
-  .heroEmoji{
-    font-size:44px; line-height:1; flex-shrink:0;
-    animation:bounce 2.6s ease-in-out infinite; transform-origin:50% 90%;
-  }
+  .hero{ background:var(--card); border:1.5px solid var(--line); border-radius:var(--round); padding:14px 16px; display:flex; align-items:center; gap:14px; margin-bottom:12px; box-shadow:0 4px 14px rgba(63,178,127,.08); }
+  .heroEmoji{ font-size:44px; line-height:1; flex-shrink:0; animation:bounce 2.6s ease-in-out infinite; transform-origin:50% 90%; }
   @keyframes bounce{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07) translateY(-3px); } }
   .heroBody{ flex:1; min-width:0; }
   .heroTitle{ font-family:var(--jua); font-size:19px; }
@@ -62,40 +40,23 @@
   .barFill{ height:100%; width:0%; background:linear-gradient(90deg,var(--green),#6BD8A8); border-radius:999px; transition:width .6s ease; }
   .heroNext{ font-size:12px; color:var(--muted); font-weight:600; }
 
-  /* ── 카메라 스테이지 ── */
-  .stage{
-    position:relative; width:100%; aspect-ratio:3/4; max-height:60vh;
-    background:#0d1712; border-radius:24px; overflow:hidden;
-    outline:5px solid var(--line); outline-offset:-5px; transition:outline-color .35s ease;
-  }
+  .stage{ position:relative; width:100%; aspect-ratio:3/4; max-height:60vh; background:#0d1712; border-radius:24px; overflow:hidden; outline:5px solid var(--line); outline-offset:-5px; transition:outline-color .35s ease; }
   @media (min-width:560px){ .stage{ aspect-ratio:4/3; } }
   .stage.good{ outline-color:var(--green); animation:breath 3.2s ease-in-out infinite; }
   .stage.bad{ outline-color:var(--coral); animation:alarm 1s ease-in-out infinite; }
   .stage.info{ outline-color:var(--sky); }
   @keyframes breath{ 0%,100%{ outline-width:5px; } 50%{ outline-width:9px; } }
   @keyframes alarm{ 0%,100%{ outline-width:6px; } 50%{ outline-width:12px; } }
-  @media (prefers-reduced-motion: reduce){
-    .stage.good,.stage.bad,.heroEmoji{ animation:none; }
-  }
+  @media (prefers-reduced-motion: reduce){ .stage.good,.stage.bad,.heroEmoji{ animation:none; } }
   .stage video,.stage canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .stage .mirror{ transform:scaleX(-1); }
 
-  .placeholder{
-    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
-    justify-content:center; gap:10px; text-align:center; padding:24px;
-    background:linear-gradient(180deg,#EAF7EF,#DFF2E6); color:var(--ink);
-  }
+  .placeholder{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px; background:linear-gradient(180deg,#EAF7EF,#DFF2E6); color:var(--ink); }
   .placeholder .big{ font-size:44px; }
   .placeholder h2{ margin:0; font-family:var(--jua); font-size:19px; }
   .placeholder p{ margin:0; color:#5D7F72; font-size:13.5px; line-height:1.7; }
 
-  .banner{
-    position:absolute; left:12px; right:12px; bottom:12px;
-    background:rgba(255,255,255,.94); border:2px solid var(--line); border-radius:16px;
-    padding:12px 14px; text-align:center; font-family:var(--jua);
-    font-size:clamp(17px, 5.2vw, 24px); line-height:1.35;
-    opacity:0; transform:translateY(8px); transition:all .25s ease; pointer-events:none;
-  }
+  .banner{ position:absolute; left:12px; right:12px; bottom:12px; background:rgba(255,255,255,.94); border:2px solid var(--line); border-radius:16px; padding:12px 14px; text-align:center; font-family:var(--jua); font-size:clamp(17px, 5.2vw, 24px); line-height:1.35; opacity:0; transform:translateY(8px); transition:all .25s ease; pointer-events:none; }
   .banner.show{ opacity:1; transform:translateY(0); }
   .banner.bad{ color:#D9564A; border-color:var(--coral); background:var(--coral-soft); }
   .banner.info{ color:#2F7CC0; border-color:var(--sky); background:var(--sky-soft); }
@@ -103,7 +64,6 @@
 
   .trust{ text-align:center; font-size:11.5px; color:var(--muted); margin:8px 2px 0; font-weight:600; }
 
-  /* 상태 밴드 */
   .status{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 2px 4px; }
   .statusWord{ font-family:var(--jua); font-size:clamp(22px, 6.4vw, 30px); line-height:1.2; }
   .statusWord.good{ color:var(--green); } .statusWord.bad{ color:#E2695C; } .statusWord.info{ color:#3E8CCB; }
@@ -111,26 +71,19 @@
   .badges{ display:flex; gap:6px; flex-shrink:0; }
   .badge{ font-size:12px; font-weight:700; color:#54796C; background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:5px 9px; }
 
-  /* 컨트롤 */
   .controls{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:8px; margin-top:12px; }
-  button{
-    font-family:var(--jua); font-size:16px; color:var(--ink);
-    background:var(--card); border:2px solid var(--line); border-radius:16px;
-    padding:14px 8px; cursor:pointer; touch-action:manipulation;
-  }
+  button{ font-family:var(--jua); font-size:16px; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:16px; padding:14px 8px; cursor:pointer; touch-action:manipulation; }
   button:active{ transform:scale(.97); }
   button.primary{ background:var(--green); border-color:var(--green); color:#fff; }
   button.primary.stop{ background:var(--coral); border-color:var(--coral); }
   button:disabled{ opacity:.45; cursor:default; }
   button:focus-visible{ outline:3px solid var(--sky); outline-offset:2px; }
 
-  /* 통계 */
   .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
   .stat{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:10px 12px; text-align:center; }
   .stat b{ display:block; font-family:var(--jua); font-size:19px; color:var(--ink); }
   .stat span{ font-size:11.5px; color:var(--muted); font-weight:600; }
 
-  /* 카드 공통 */
   .card{ background:var(--card); border:1.5px solid var(--line); border-radius:var(--round); padding:13px 15px; margin-top:10px; }
   .card h3{ margin:0 0 8px; font-family:var(--jua); font-size:15px; }
   .log{ list-style:none; margin:0; padding:0; font-size:13.5px; }
@@ -140,10 +93,7 @@
   .log .empty{ color:var(--muted); border:none; }
 
   details.card{ padding:0; overflow:hidden; }
-  details.card summary{
-    padding:13px 15px; font-family:var(--jua); font-size:15px; cursor:pointer; list-style:none;
-    display:flex; justify-content:space-between; align-items:center;
-  }
+  details.card summary{ padding:13px 15px; font-family:var(--jua); font-size:15px; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
   details.card summary::after{ content:"▾"; color:var(--muted); transition:transform .2s; }
   details.card[open] summary::after{ transform:rotate(180deg); }
   .cardBody{ padding:2px 15px 15px; display:flex; flex-direction:column; gap:13px; }
@@ -160,10 +110,8 @@
   .miniBtns{ display:flex; gap:8px; }
   .miniBtns button{ font-size:14px; padding:10px 12px; border-radius:12px; flex:1; }
   .diag{ font-family:ui-monospace, monospace; font-size:11px; color:var(--muted); line-height:1.8; word-break:break-all; }
-
   .foot{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:16px; line-height:1.7; font-weight:500; }
 
-  /* 컨페티 */
   .confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:50; }
   .confetti i{ position:absolute; top:-40px; font-style:normal; font-size:22px; will-change:transform; }
 </style>
@@ -190,10 +138,10 @@
   <div class="placeholder" id="placeholder">
     <div class="big">🌳✨</div>
     <h2>바른 자세로 나무를 키워요!</h2>
-    <p>① 몸이 잘 보이게 기기를 세워 두고<br>
-       ② <b>시작</b> 버튼을 콕! 눌러요<br>
-       ③ 바른 자세로 <b>기준 저장</b>을 누르면<br>
-       코치가 차근차근 알려 드려요 💚</p>
+    <p>카메라는 <b>살짝 비스듬한 옆모습</b>이 최고예요!<br>
+       (귀-어깨-골반 줄서기 + 짝다리까지 다 보여요)<br><br>
+       ① <b>시작</b>을 콕! → ② 바른 자세로 <b>기준 저장</b><br>
+       ③ 합격해야만 저장돼요 — 코치가 도와줄게요 💚</p>
   </div>
   <div class="banner" id="banner"></div>
 </div>
@@ -231,32 +179,39 @@
   <summary>📖 바른 자세 비법 노트</summary>
   <div class="cardBody">
     <div>
+      <div class="tipTitle">📐 다림줄 검사가 뭐예요?</div>
+      <ul class="tipList">
+        <li>옆에서 봤을 때 <b>귀-어깨-골반</b>이 수직 한 줄이면 바른 자세!</li>
+        <li>서 있을 땐 <b>발목 위</b>에 골반까지 쌓여야 해요 (배 내밀기 금지!)</li>
+        <li>화면의 점선이 다림줄이에요 — 줄에서 벗어나면 알려 드려요</li>
+      </ul>
+    </div>
+    <div>
       <div class="tipTitle">🪑 앉을 때는 이렇게!</div>
       <ul class="tipList">
         <li>엉덩이를 의자 깊숙이 쏙~ 넣어요</li>
         <li>두 발바닥은 바닥에 나란히 11자로!</li>
-        <li>무릎은 ㄱ자(90도)로 접어요</li>
-        <li>허리와 등은 곧게 세우고 등받이에 살짝 기대요</li>
-        <li>어깨는 힘을 빼고 사르르 내려요</li>
-        <li>턱은 살짝 당기고 시선은 정면으로!</li>
+        <li>어깨는 뒤로 한 바퀴 돌려서 사르르 내려놓아요</li>
+        <li>그다음 정수리가 하늘에 닿게 키를 쭈욱!</li>
+        <li>턱은 살짝 당기고 시선은 정면으로</li>
         <li>다리는 꼬지 않기로 약속해요</li>
       </ul>
     </div>
     <div>
       <div class="tipTitle">🧍 서 있을 때는 이렇게!</div>
       <ul class="tipList">
-        <li>두 발을 어깨너비만큼 벌려요</li>
-        <li>무릎을 쭉 펴고 배에 살짝 힘을 줘요</li>
-        <li>가슴을 활짝 열고 어깨는 내려요</li>
-        <li>정수리가 하늘에 닿는다고 상상해요</li>
-        <li>체중은 두 발에 골고루 나눠요</li>
+        <li>두 발을 어깨너비만큼 벌리고, 두 다리에 골고루 힘!</li>
+        <li>무릎은 둘 다 쭉~ (짝다리 금지!)</li>
+        <li>갈비뼈는 살짝 닫고, 아랫배는 배꼽 쪽으로 쓰윽 끌어올려요</li>
+        <li>어깨를 뒤로 돌려 내리고, 정수리는 하늘로!</li>
       </ul>
     </div>
     <div>
       <div class="tipTitle">⏰ 잊지 마세요!</div>
       <ul class="tipList">
         <li>30분마다 한 번씩 일어나 기지개를 쭉~ 켜요</li>
-        <li>거북목·굽은 등은 옆모습(측면) 카메라가 잘 잡아요</li>
+        <li>짝다리는 두 다리가 다 보여야 잡아요 — 살짝 비스듬한 옆이 딱!</li>
+        <li>어깨 수평·다리 꼬기는 정면에서 잘 보여요</li>
       </ul>
     </div>
   </div>
@@ -303,10 +258,19 @@ import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdel
 /* ───────── 상수 ───────── */
 const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
 const MODEL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
-const KEY = "postureTree.growth";   // 저장은 오직 이것 하나: 누적 바른자세 시간
+const KEY = "postureTree.growth";
 const I = { NOSE:0, LEAR:7, REAR:8, LSH:11, RSH:12, LHIP:23, RHIP:24, LKNEE:25, RKNEE:26, LANK:27, RANK:28 };
 
-/* ───────── 레벨 (누적 바른자세 '분' 기준) ───────── */
+/* 절대 한계 — 기준과 무관하게 명백히 나쁜 자세 (모니터링용) */
+const ABS = { turtle:0.30, shHip:0.28, sway:0.28, tiltDeg:12 };
+/* 기준 합격 검사 — 이걸 통과해야 기준으로 저장돼요 */
+const GATE = {
+  side:  { earSh:0.15, shHip:0.12, pitch:0.32, shiftStand:0.18 },
+  front: { tilt:5, headRoll:6 },
+  stand: { kneeAsym:12 },
+};
+
+/* ───────── 레벨 ───────── */
 const LEVELS = [
   { min:0,    emoji:"🌱", name:"꼬물꼬물 새싹" },
   { min:10,   emoji:"🌿", name:"쑥쑥 풀잎" },
@@ -321,7 +285,7 @@ const LEVELS = [
 ];
 const levelIdx = mins => { let i=0; for(let j=0;j<LEVELS.length;j++) if(mins>=LEVELS[j].min) i=j; return i; };
 
-/* ───────── 귀여운 멘트 모음 ───────── */
+/* ───────── 귀여운 멘트 ───────── */
 const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 const GREETINGS = [
   "안녕하세요! 오늘도 바른 자세, 함께 만들어 봐요!",
@@ -329,6 +293,10 @@ const GREETINGS = [
   "반가워요! 허리를 펴면 별이 반짝반짝 모여요!",
 ];
 const RULE_LINES = {
+  turtle: [
+    "거북이처럼 목이 쑥 나왔어요! 뒤통수를 뒤로 스르륵 당겨 볼까요?",
+    "귀가 어깨보다 앞에 있어요. 턱을 살짝 당기면 다림줄에 쏙 들어와요!",
+  ],
   slouch: [
     "등이 조금 굽었어요. 정수리가 하늘에 닿는다고 생각하며 쭉 펴 볼까요?",
     "허리를 곧게 세워 볼까요? 엉덩이를 의자 깊숙이 넣으면 훨씬 쉬워요!",
@@ -338,12 +306,16 @@ const RULE_LINES = {
     "배가 살짝 나왔어요. 배꼽을 등 쪽으로 쏘옥~ 당겨 볼까요?",
     "골반이 앞으로 나왔어요. 배에 살짝 힘을 주면 멋진 자세가 돼요!",
   ],
+  sway: [
+    "골반이 앞으로 쑥 나왔어요! 엉덩이를 살짝 뒤로 보내 볼까요?",
+    "배를 내밀고 서 있네요. 갈비뼈를 닫고 아랫배를 쓰윽 끌어올려요!",
+  ],
   head: [
     "고개가 푹 숙여졌어요. 턱을 살짝 당기고 시선은 정면으로!",
     "화면을 너무 가까이 보고 있어요. 고개를 들어 볼까요?",
   ],
   shoulder: [
-    "어깨가 쑥 올라갔어요. 숨을 후~ 내쉬며 어깨를 사르르 내려요.",
+    "어깨가 쑥 올라갔어요. 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
     "어깨에 힘이 들어갔나 봐요. 귀와 어깨 사이를 멀~리 떨어뜨려요!",
   ],
   tilt: [
@@ -355,8 +327,9 @@ const RULE_LINES = {
     "다리는 꼬지 않기로 해요. 무릎과 발을 11자로 예쁘게!",
   ],
   weight: [
-    "한쪽 다리에 기대고 있어요. 두 발에 골고루 힘을 나눠요!",
-    "몸이 한쪽으로 쏠렸어요. 씩씩하게 균형을 잡아 볼까요?",
+    "짝다리 금지! 두 다리에 사이좋게 힘을 나눠요!",
+    "한쪽 다리에 기대고 있어요. 두 무릎을 똑같이 쭉 펴 볼까요?",
+    "몸이 한쪽으로 쏠렸어요. 씩씩하게 균형을 잡아요!",
   ],
 };
 const PRAISES = m => [
@@ -364,29 +337,41 @@ const PRAISES = m => [
   `대단해요! ${m}분 동안 곧게 지켰어요! 나무가 좋아해요!`,
   `짝짝짝! ${m}분 달성! 자세나무가 쑥쑥 자라고 있어요!`,
 ];
+/* 어깨를 내린 '다음' 등을 다시 세우도록 순서를 짰어요 */
 const CAL_SIT = [
   "자, 바른 자세 연습을 시작할게요!",
   "엉덩이를 의자 깊숙이 쏘옥 넣어요.",
   "두 발바닥은 바닥에 사이좋게 나란히!",
-  "허리와 등을 곧게 세워요.",
-  "어깨는 힘을 빼고 사르르 내려요.",
+  "어깨를 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
+  "이제 정수리가 하늘에 닿도록 키를 쭈욱 키워요!",
   "턱을 살짝 당기고 정면을 바라봐요.",
-  "우와, 완벽해요! 이 자세를 기억할게요.",
+  "그대로 멈춰요! 찰칵 준비~",
 ];
 const CAL_STAND = [
   "자, 멋지게 서는 연습을 해 볼게요!",
-  "두 발을 어깨너비만큼 벌려요.",
-  "무릎을 쭉 펴고 배에 살짝 힘!",
-  "가슴을 활짝 열고 어깨를 내려요.",
-  "정수리가 하늘에 닿는 느낌으로 키를 키워요.",
-  "정말 멋져요! 이 자세를 기억할게요.",
+  "두 발을 어깨너비만큼 벌리고, 두 무릎을 똑같이 쭉 펴요.",
+  "갈비뼈를 아래로 살짝 닫고, 아랫배는 위로 쓰윽 끌어올려요!",
+  "어깨를 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
+  "정수리가 하늘에 닿도록 키를 쭈욱 키워요!",
+  "턱을 살짝 당기고 먼 곳을 바라봐요.",
+  "그대로 멈춰요! 찰칵 준비~",
 ];
+/* 합격 검사에서 떨어졌을 때 — 무엇을 고칠지 콕 집어 알려줘요 */
+const GATE_FIX = {
+  earSh:    "아직 목이 앞으로 나와 있어요. 뒤통수를 뒤로~ 턱은 살짝 당겨요!",
+  shHip:    "아직 등이 굽어 있어요. 정수리를 하늘로 쭈욱 키워요!",
+  pitch:    "고개가 숙여져 있어요. 시선을 들어 정면을 봐요!",
+  shiftStand:"골반이 발보다 앞에 있어요. 엉덩이를 살짝 뒤로 보내요!",
+  kneeAsym: "짝다리로 서 있어요! 두 무릎을 똑같이 쭉 펴요!",
+  tilt:     "어깨가 한쪽으로 기울어 있어요. 저울처럼 수평으로!",
+  headRoll: "고개가 갸웃 기울었어요. 반듯하게 세워 볼까요?",
+};
 
-/* ───────── 저장: 누적 바른자세 시간(초) 딱 하나 ───────── */
+/* ───────── 저장: 누적 바른자세 시간 하나 ───────── */
 const loadGrowth = () => { try{ return Math.max(0, Number(JSON.parse(localStorage.getItem(KEY)||"0"))||0); }catch(e){ return 0; } };
 const saveGrowth = () => { try{ localStorage.setItem(KEY, JSON.stringify(Math.round(totalGood))); }catch(e){} };
 
-/* ───────── 상태 (설정·기준은 저장하지 않아요) ───────── */
+/* ───────── 상태 ───────── */
 const settings = { sens:5, sustain:5, cooldown:25, voice:true };
 const baselines = { sit:null, stand:null };
 let totalGood = loadGrowth();
@@ -408,18 +393,25 @@ const badgeStance=$("badgeStance"), badgeView=$("badgeView");
 const btnStart=$("btnStart"), btnCalib=$("btnCalib"), btnFlip=$("btnFlip");
 const logEl=$("log"), diag=$("diag");
 
-/* ───────── 판정 규칙 ───────── */
+/* ───────── 판정 규칙 (뷰별로 의미 있는 것만) ─────────
+   상대 검사(기준 대비) + 절대 검사(다림줄 한계)를 함께 봐요 */
 const kOf = () => 1.6 - 0.12*settings.sens;
 const rules = [
+  { id:"turtle", when:(m,b,k)=> view==="side" && ((m.earShDx-b.earShDx)*m.facingSign > 0.12*k || m.earShDx*m.facingSign > ABS.turtle) },
   { id:"slouch", when:(m,b,k)=> view==="side"
-      ? m.hipsOk && (m.torsoDx-b.torsoDx)*m.facingSign > 0.10*k
+      ? m.hipsOk && ((m.torsoDx-b.torsoDx)*m.facingSign > 0.10*k || m.torsoDx*m.facingSign > ABS.shHip)
       : m.faceRatio > b.faceRatio*(1+0.16*k) },
   { id:"belly", when:(m,b,k)=> view==="side" && m.hipsOk && (m.torsoDx-b.torsoDx)*m.facingSign < -0.11*k },
+  { id:"sway", when:(m,b,k)=> stance==="stand" && view==="side" && m.legsOk &&
+      ((m.shift-(b.shift??0))*m.facingSign > 0.12*k || m.shift*m.facingSign > ABS.sway) },
   { id:"head", when:(m,b,k)=> (m.pitch-b.pitch) > 0.12*k },
   { id:"shoulder", when:(m,b,k)=> m.neck < b.neck*(1-0.14*k) && (m.pitch-b.pitch) < 0.08 },
-  { id:"tilt", when:(m,b,k)=> Math.abs(m.tilt-b.tilt) > 8*k },
+  { id:"tilt", when:(m,b,k)=> view==="front" && (Math.abs(m.tilt-b.tilt) > 8*k || Math.abs(m.tilt) > ABS.tiltDeg) },
   { id:"cross", when:(m,b,k)=> stance==="sit" && view==="front" && m.legsOk && m.ankOrder < -0.25 },
-  { id:"weight", when:(m,b,k)=> stance==="stand" && m.legsOk && Math.abs(m.shift-(b.shift??0)) > 0.09*k },
+  { id:"weight", when:(m,b,k)=> stance==="stand" && m.legsOk && (
+      (view==="front" && Math.abs(m.shift-(b.shift??0)) > 0.09*k) ||
+      (m.kneeAsym-(b.kneeAsym??0)) > 12*k ||
+      (m.hipDrop-(b.hipDrop??0)) > 0.05*k ) },
 ];
 rules.forEach(r => { r.acc=0; r.lastFire=0; });
 
@@ -453,8 +445,14 @@ function computeMetrics(l){
   let a=Math.atan2(rsh.y-lsh.y, rsh.x-lsh.x)*180/Math.PI;
   if(a>90)a-=180; if(a<-90)a+=180;
   m.tilt=a;
+  let hr=Math.atan2(rear.y-lear.y, rear.x-lear.x)*180/Math.PI;
+  if(hr>90)hr-=180; if(hr<-90)hr+=180;
+  m.headRoll=hr;
   m.torsoDx=hipsOk?(shC.x-hipC.x)/torso:0;
+  m.earShDx=(earC.x-shC.x)/torso;
   m.facingSign=Math.sign(nose.x-earC.x)||1;
+  m.anchorX = hipsOk ? hipC.x : shC.x;
+  m.earC=earC; m.shC=shC; m.hipC=hipC;
 
   const legsOk=hipsOk&&vis(I.LKNEE,I.RKNEE,I.LANK,I.RANK);
   m.legsOk=legsOk;
@@ -462,15 +460,18 @@ function computeMetrics(l){
     const kneeL=jointAngle(P(I.LHIP),P(I.LKNEE),P(I.LANK));
     const kneeR=jointAngle(P(I.RHIP),P(I.RKNEE),P(I.RANK));
     m.kneeAngle=(kneeL+kneeR)/2;
+    m.kneeAsym=Math.abs(kneeL-kneeR);
+    m.hipDrop=Math.abs(P(I.LHIP).y-P(I.RHIP).y)/torso;
     const ankC=mid(P(I.LANK),P(I.RANK));
     m.shift=(hipC.x-ankC.x)/torso;
+    if(stance==="stand") m.anchorX=ankC.x;
     const hipW=Math.abs(P(I.LHIP).x-P(I.RHIP).x)||1e-4;
     const s=Math.sign(P(I.LHIP).x-P(I.RHIP).x)||1;
     m.ankOrder=((P(I.LANK).x-P(I.RANK).x)*s)/hipW;
-  } else { m.kneeAngle=null; m.shift=0; m.ankOrder=1; }
+  } else { m.kneeAngle=null; m.kneeAsym=null; m.hipDrop=null; m.shift=0; m.ankOrder=1; }
   return m;
 }
-const SMOOTH=["neck","pitch","faceRatio","tilt","torsoDx","shift","ankOrder","profile","kneeAngle"];
+const SMOOTH=["neck","pitch","faceRatio","tilt","headRoll","torsoDx","earShDx","shift","ankOrder","profile","kneeAngle","kneeAsym","hipDrop"];
 function smooth(m){
   if(!ema){ ema={...m}; return ema; }
   const A=0.35;
@@ -479,6 +480,7 @@ function smooth(m){
     ema[key]=(ema[key]==null)?m[key]:ema[key]*(1-A)+m[key]*A;
   }
   ema.hipsOk=m.hipsOk; ema.legsOk=m.legsOk; ema.facingSign=m.facingSign;
+  ema.anchorX=m.anchorX; ema.earC=m.earC; ema.shC=m.shC; ema.hipC=m.hipC;
   return ema;
 }
 
@@ -492,7 +494,23 @@ function updateStanceView(m, dt){
   if(m.profile<0.45) view="side";
   else if(m.profile>0.55) view="front";
   badgeStance.textContent = stance==="sit" ? "🪑 앉아요" : "🧍 서 있어요";
-  badgeView.textContent = view==="side" ? "옆모습" : "정면";
+  badgeView.textContent = view==="side" ? "📐 옆모습" : "정면";
+}
+
+/* ───────── 기준 합격 검사 ───────── */
+function gateCheck(b){
+  const fails=[];
+  if(b.view==="side"){
+    if(Math.abs(b.earShDx) > GATE.side.earSh) fails.push("earSh");
+    if(b.hipsOk && Math.abs(b.torsoDx) > GATE.side.shHip) fails.push("shHip");
+    if(b.pitch > GATE.side.pitch) fails.push("pitch");
+    if(b.stance==="stand" && b.legsOk && Math.abs(b.shift) > GATE.side.shiftStand) fails.push("shiftStand");
+  } else {
+    if(Math.abs(b.tilt) > GATE.front.tilt) fails.push("tilt");
+    if(Math.abs(b.headRoll) > GATE.front.headRoll) fails.push("headRoll");
+  }
+  if(b.stance==="stand" && b.legsOk && (b.kneeAsym??0) > GATE.stand.kneeAsym) fails.push("kneeAsym");
+  return fails;
 }
 
 /* ───────── 화면 상태 ───────── */
@@ -613,9 +631,10 @@ function processFrame(lm, dt){
   const m=smooth(computeMetrics(lm));
   updateStanceView(m, dt);
   diag.textContent=
-    `view=${view} stance=${stance} neck=${m.neck?.toFixed(3)} pitch=${m.pitch?.toFixed(3)} `+
-    `face=${m.faceRatio?.toFixed(3)} tilt=${m.tilt?.toFixed(1)} torsoDx=${m.torsoDx?.toFixed(3)} `+
-    `ank=${m.ankOrder?.toFixed(2)} knee=${m.kneeAngle?m.kneeAngle.toFixed(0):"-"}`;
+    `view=${view} stance=${stance} earShDx=${m.earShDx?.toFixed(3)} torsoDx=${m.torsoDx?.toFixed(3)} `+
+    `shift=${m.shift?.toFixed(3)} kAsym=${m.kneeAsym!=null?m.kneeAsym.toFixed(0):"-"} hDrop=${m.hipDrop!=null?m.hipDrop.toFixed(3):"-"} `+
+    `neck=${m.neck?.toFixed(3)} pitch=${m.pitch?.toFixed(3)} face=${m.faceRatio?.toFixed(3)} `+
+    `tilt=${m.tilt?.toFixed(1)} roll=${m.headRoll?.toFixed(1)} ank=${m.ankOrder?.toFixed(2)} knee=${m.kneeAngle?m.kneeAngle.toFixed(0):"-"}`;
 
   if(calibrating){ if(calibBuf)calibBuf.push({...m}); return; }
 
@@ -654,7 +673,7 @@ function noPerson(){
   diag.textContent="관절 미검출";
 }
 
-/* ───────── 그리기 ───────── */
+/* ───────── 그리기 (옆모습이면 다림줄도 함께) ───────── */
 let du=null;
 function draw(result, ok){
   ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -663,6 +682,23 @@ function draw(result, ok){
   const color=ok?"#6BD8A8":"#FF8B7A";
   du.drawConnectors(result.landmarks[0], PoseLandmarker.POSE_CONNECTIONS, {color, lineWidth:3});
   du.drawLandmarks(result.landmarks[0], {color:"#FFFFFF", radius:2.5});
+  if(view==="side" && ema && ema.anchorX!=null){
+    const x=ema.anchorX*canvas.width;
+    ctx.save();
+    ctx.setLineDash([12,10]);
+    ctx.strokeStyle="rgba(255,255,255,0.75)";
+    ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
+    ctx.setLineDash([]);
+    for(const p of [ema.earC, ema.shC, ema.hipC]){
+      if(!p)continue;
+      ctx.beginPath();
+      ctx.arc(p.x*canvas.width, p.y*canvas.height, 9, 0, Math.PI*2);
+      ctx.fillStyle = ok ? "rgba(107,216,168,0.9)" : "rgba(255,139,122,0.9)";
+      ctx.fill();
+    }
+    ctx.restore();
+  }
 }
 
 /* ───────── 메인 루프 ───────── */
@@ -757,36 +793,62 @@ btnFlip.addEventListener("click", async ()=>{
   try{ await startCamera(); }catch(e){ cameraError(e); }
 });
 
-/* ───────── 기준 저장: 차근차근 음성 코칭 후 측정 ───────── */
+/* ───────── 기준 저장: 안내 → 촬영 → 합격 검사 → (불합격 시 재도전) ───────── */
+async function captureOnce(){
+  calibrating=true; calibBuf=[];
+  await sleep(1500);
+  calibrating=false;
+  if(!calibBuf || calibBuf.length<5){ calibBuf=null; return null; }
+  const b={};
+  for(const key of SMOOTH){
+    const vals=calibBuf.map(s=>s[key]).filter(v=>v!=null);
+    b[key]=vals.length ? vals.reduce((a,c)=>a+c,0)/vals.length : null;
+  }
+  b.hipsOk = calibBuf.filter(s=>s.hipsOk).length > calibBuf.length/2;
+  b.legsOk = calibBuf.filter(s=>s.legsOk).length > calibBuf.length/2;
+  b.view=view; b.stance=stance;
+  calibBuf=null;
+  return b;
+}
 btnCalib.addEventListener("click", async ()=>{
   if(!running||calibrating)return;
-  calibrating=true; btnCalib.disabled=true;
+  btnCalib.disabled=true;
   const script = stance==="sit" ? CAL_SIT : CAL_STAND;
   for(let i=0;i<script.length;i++){
     showBanner(script[i], "info", 2600);
     speak(script[i], i===0?"chime":null);
     await sleep(i===script.length-1 ? 1400 : 2700);
   }
-  calibBuf=[];
-  showBanner("찰칵! 기억하는 중…", "info", 1800);
-  await sleep(1500);
-  calibrating=false; btnCalib.disabled=false;
-  if(!calibBuf||calibBuf.length<5){
-    showBanner("앗, 몸이 잘 안 보여요. 다시 해 볼까요?", "bad");
-    calibBuf=null; return;
+  let saved=false;
+  for(let attempt=1; attempt<=3; attempt++){
+    showBanner("찰칵! 검사하는 중…", "info", 1800);
+    const b=await captureOnce();
+    if(!b){
+      showBanner("앗, 몸이 잘 안 보여요. 카메라를 확인해 주세요!", "bad");
+      speak("몸이 잘 안 보여요. 카메라를 확인해 주세요!", "beep");
+      break;
+    }
+    const fails=gateCheck(b);
+    if(fails.length===0){
+      baselines[stance]=b;
+      rules.forEach(r=>{ r.acc=0; });
+      const label=stance==="sit"?"앉은":"선";
+      showBanner(`✅ 합격! ${label} 자세를 기억했어요!`, "praise");
+      speak("합격이에요! 완벽한 자세를 기억할게요. 이제 함께 지켜봐요!", "chime");
+      saved=true;
+      break;
+    }
+    const fix=GATE_FIX[fails[0]];
+    if(attempt<3){
+      showBanner(`🔍 ${fix}`, "bad", 4200);
+      speak(fix + " 삼 초 뒤에 다시 찍을게요!", "beep");
+      await sleep(4200);
+    } else {
+      showBanner("조금 쉬었다가 다시 도전해요! 비법 노트를 참고해 보세요", "bad", 4500);
+      speak(fix + " 조금 쉬었다가 다시 도전해요!", "beep");
+    }
   }
-  const b={};
-  for(const key of SMOOTH){
-    const vals=calibBuf.map(s=>s[key]).filter(v=>v!=null);
-    b[key]=vals.length ? vals.reduce((a,c)=>a+c,0)/vals.length : null;
-  }
-  b.view=view; b.stance=stance;
-  baselines[stance]=b;
-  rules.forEach(r=>{ r.acc=0; });
-  const label=stance==="sit"?"앉은":"선";
-  showBanner(`✅ ${label} 자세를 기억했어요!`, "praise");
-  speak("이 자세, 꼭 기억할게요! 이제 함께 지켜봐요!", "chime");
-  calibBuf=null;
+  btnCalib.disabled=false;
 });
 
 /* ───────── 설정 UI (저장하지 않아요) ───────── */
