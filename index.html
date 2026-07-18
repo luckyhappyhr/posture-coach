@@ -72,6 +72,9 @@
   .badge{ font-size:12px; font-weight:700; color:#54796C; background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:5px 9px; }
 
   .controls{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:8px; margin-top:12px; }
+  .modeRow{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .modeBtn{ font-size:17px; padding:13px 8px; border-radius:16px; }
+  .modeBtn.on{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
   button{ font-family:var(--jua); font-size:16px; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:16px; padding:14px 8px; cursor:pointer; touch-action:manipulation; }
   button:active{ transform:scale(.97); }
   button.primary{ background:var(--green); border-color:var(--green); color:#fff; }
@@ -109,6 +112,9 @@
   .row output{ font-size:12.5px; color:var(--muted); min-width:44px; text-align:right; font-weight:700; }
   .miniBtns{ display:flex; gap:8px; }
   .miniBtns button{ font-size:14px; padding:10px 12px; border-radius:12px; flex:1; }
+  .seg{ display:flex; gap:6px; }
+  .seg button{ flex:1; font-size:13.5px; padding:10px 6px; border-radius:12px; }
+  .seg button.on{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
   .diag{ font-family:ui-monospace, monospace; font-size:11px; color:var(--muted); line-height:1.8; word-break:break-all; }
   .foot{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:16px; line-height:1.7; font-weight:500; }
 
@@ -153,9 +159,13 @@
     <div class="statusSub" id="statusSub">시작을 누르면 함께해요!</div>
   </div>
   <div class="badges">
-    <div class="badge" id="badgeStance">자세 —</div>
     <div class="badge" id="badgeView">각도 —</div>
   </div>
+</div>
+
+<div class="modeRow">
+  <button class="modeBtn on" id="modeSit">🪑 앉아서</button>
+  <button class="modeBtn" id="modeStand">🧍 서서</button>
 </div>
 
 <div class="controls">
@@ -220,6 +230,14 @@
 <details class="card">
   <summary>⚙️ 설정</summary>
   <div class="cardBody">
+    <div class="row" style="margin-bottom:-6px">
+      <label>기준 검사 강도<small>몸이 굳어 있다면 '편안하게'로!</small></label>
+    </div>
+    <div class="seg">
+      <button id="gateStrict">엄격</button>
+      <button id="gateNormal" class="on">보통</button>
+      <button id="gateEasy">편안하게</button>
+    </div>
     <div class="row">
       <label>민감도<small>높을수록 작은 흐트러짐도 잡아요</small></label>
       <input type="range" id="setSens" min="1" max="9" step="1" value="5">
@@ -372,16 +390,17 @@ const loadGrowth = () => { try{ return Math.max(0, Number(JSON.parse(localStorag
 const saveGrowth = () => { try{ localStorage.setItem(KEY, JSON.stringify(Math.round(totalGood))); }catch(e){} };
 
 /* ───────── 상태 ───────── */
-const settings = { sens:5, sustain:2, cooldown:15, voice:true };
+const settings = { sens:5, sustain:2, cooldown:15, voice:true, gate:1.35 };
 const baselines = { sit:null, stand:null };
 let totalGood = loadGrowth();
 let curLevel = levelIdx(totalGood/60);
 
 let landmarker=null, stream=null, running=false, facing="user";
 let wakeLock=null, audioCtx=null;
-let stance="sit", stanceTimer=0, view="front";
+let stance="sit", view="front";
 let ema=null, lastFrameT=0, calibrating=false, calibBuf=null;
 let scripting=false, autoHold=0, cdT=-1, cdSpoken=-1, lastHint=0, lastCancel=0, armedKey="";
+let waitT=0, bestScore=Infinity, bestM=null;
 let sessionGood=0, streak=0, badHold=0, milestoneIdx=0, bannerTimer=0;
 const MILESTONES = [60,180,300,600,900,1200,1800,2700,3600];
 
@@ -390,7 +409,8 @@ const $ = id => document.getElementById(id);
 const video=$("cam"), canvas=$("overlay"), ctx=canvas.getContext("2d");
 const stage=$("stage"), placeholder=$("placeholder"), banner=$("banner");
 const statusWord=$("statusWord"), statusSub=$("statusSub"), pill=$("pillState");
-const badgeStance=$("badgeStance"), badgeView=$("badgeView");
+const badgeView=$("badgeView");
+const modeSit=$("modeSit"), modeStand=$("modeStand");
 const btnStart=$("btnStart"), btnCalib=$("btnCalib"), btnFlip=$("btnFlip");
 const logEl=$("log"), diag=$("diag");
 
@@ -398,16 +418,16 @@ const logEl=$("log"), diag=$("diag");
    상대 검사(기준 대비) + 절대 검사(다림줄 한계)를 함께 봐요 */
 const kOf = () => 1.6 - 0.12*settings.sens;
 const rules = [
-  { id:"turtle", when:(m,b,k)=> view==="side" && ((m.earShDx-b.earShDx)*m.facingSign > 0.12*k || m.earShDx*m.facingSign > ABS.turtle) },
+  { id:"turtle", when:(m,b,k)=> view==="side" && ((m.earShDx-b.earShDx)*m.facingSign > 0.12*k || m.earShDx*m.facingSign > Math.max(ABS.turtle, b.earShDx*m.facingSign+0.10)) },
   { id:"slouch", when:(m,b,k)=> view==="side"
-      ? m.hipsOk && ((m.torsoDx-b.torsoDx)*m.facingSign > 0.10*k || m.torsoDx*m.facingSign > ABS.shHip)
+      ? m.hipsOk && ((m.torsoDx-b.torsoDx)*m.facingSign > 0.10*k || m.torsoDx*m.facingSign > Math.max(ABS.shHip, b.torsoDx*m.facingSign+0.10))
       : m.faceRatio > b.faceRatio*(1+0.16*k) },
   { id:"belly", when:(m,b,k)=> view==="side" && m.hipsOk && (m.torsoDx-b.torsoDx)*m.facingSign < -0.11*k },
   { id:"sway", when:(m,b,k)=> stance==="stand" && view==="side" && m.legsOk &&
-      ((m.shift-(b.shift??0))*m.facingSign > 0.12*k || m.shift*m.facingSign > ABS.sway) },
+      ((m.shift-(b.shift??0))*m.facingSign > 0.12*k || m.shift*m.facingSign > Math.max(ABS.sway, (b.shift??0)*m.facingSign+0.10)) },
   { id:"head", when:(m,b,k)=> (m.pitch-b.pitch) > 0.12*k },
   { id:"shoulder", when:(m,b,k)=> m.neck < b.neck*(1-0.14*k) && (m.pitch-b.pitch) < 0.08 },
-  { id:"tilt", when:(m,b,k)=> view==="front" && (Math.abs(m.tilt-b.tilt) > 8*k || Math.abs(m.tilt) > ABS.tiltDeg) },
+  { id:"tilt", when:(m,b,k)=> view==="front" && (Math.abs(m.tilt-b.tilt) > 8*k || Math.abs(m.tilt) > Math.max(ABS.tiltDeg, Math.abs(b.tilt)+6)) },
   { id:"cross", when:(m,b,k)=> stance==="sit" && view==="front" && m.legsOk && m.ankOrder < -0.25 },
   { id:"weight", when:(m,b,k)=> stance==="stand" && m.legsOk && (
       (view==="front" && Math.abs(m.shift-(b.shift??0)) > 0.09*k) ||
@@ -487,31 +507,38 @@ function smooth(m){
 
 /* ───────── 자세/각도 판별 ───────── */
 function updateStanceView(m, dt){
-  if(m.legsOk && m.kneeAngle!=null){
-    const target = m.kneeAngle>150 ? "stand" : (m.kneeAngle<135 ? "sit" : stance);
-    if(target!==stance){ stanceTimer+=dt; if(stanceTimer>1){ stance=target; stanceTimer=0; } }
-    else stanceTimer=0;
-  }
   if(m.profile<0.45) view="side";
   else if(m.profile>0.55) view="front";
-  badgeStance.textContent = stance==="sit" ? "🪑 앉아요" : "🧍 서 있어요";
   badgeView.textContent = view==="side" ? "📐 옆모습" : "정면";
 }
 
 /* ───────── 기준 합격 검사 ───────── */
-function gateCheck(b){
+function gateCheck(b, f=1){
   const fails=[];
   if(b.view==="side"){
-    if(Math.abs(b.earShDx) > GATE.side.earSh) fails.push("earSh");
-    if(b.hipsOk && Math.abs(b.torsoDx) > GATE.side.shHip) fails.push("shHip");
-    if(b.pitch > GATE.side.pitch) fails.push("pitch");
-    if(b.stance==="stand" && b.legsOk && Math.abs(b.shift) > GATE.side.shiftStand) fails.push("shiftStand");
+    if(Math.abs(b.earShDx) > GATE.side.earSh*f) fails.push("earSh");
+    if(b.hipsOk && Math.abs(b.torsoDx) > GATE.side.shHip*f) fails.push("shHip");
+    if(b.pitch > GATE.side.pitch*f) fails.push("pitch");
+    if(b.stance==="stand" && b.legsOk && Math.abs(b.shift) > GATE.side.shiftStand*f) fails.push("shiftStand");
   } else {
-    if(Math.abs(b.tilt) > GATE.front.tilt) fails.push("tilt");
-    if(Math.abs(b.headRoll) > GATE.front.headRoll) fails.push("headRoll");
+    if(Math.abs(b.tilt) > GATE.front.tilt*f) fails.push("tilt");
+    if(Math.abs(b.headRoll) > GATE.front.headRoll*f) fails.push("headRoll");
   }
-  if(b.stance==="stand" && b.legsOk && (b.kneeAsym??0) > GATE.stand.kneeAsym) fails.push("kneeAsym");
+  if(b.stance==="stand" && b.legsOk && (b.kneeAsym??0) > GATE.stand.kneeAsym*f) fails.push("kneeAsym");
   return fails;
+}
+/* 다림줄에서 얼마나 벗어났는지 점수화 — '오늘의 최선' 고르기용 (낮을수록 좋음) */
+function devScore(m){
+  if(view==="side"){
+    let s = Math.abs(m.earShDx)/GATE.side.earSh
+          + (m.hipsOk ? Math.abs(m.torsoDx)/GATE.side.shHip : 0)
+          + Math.max(0, m.pitch)/GATE.side.pitch;
+    if(stance==="stand" && m.legsOk){
+      s += Math.abs(m.shift??0)/GATE.side.shiftStand + (m.kneeAsym??0)/GATE.stand.kneeAsym*0.5;
+    }
+    return s;
+  }
+  return Math.abs(m.tilt)/GATE.front.tilt + Math.abs(m.headRoll)/GATE.front.headRoll;
 }
 
 /* ───────── 화면 상태 ───────── */
@@ -646,7 +673,7 @@ async function doAutoCapture(){
   const b=await captureOnce();
   cdT=-1; cdSpoken=-1; autoHold=0;
   if(!b) return;
-  if(gateCheck(b).length>0){
+  if(gateCheck(b, settings.gate*1.15).length>0){
     showBanner("조금 흔들렸어요. 다시 한번 자세를 잡아 봐요!", "bad", 2800);
     return;
   }
@@ -662,16 +689,21 @@ function autoCalTick(m, dt){
   const key=`${stance}|${view}`;
   if(armedKey!==key){
     armedKey=key; autoHold=0; cdT=-1; cdSpoken=-1;
+    waitT=0; bestScore=Infinity; bestM=null;
     const label=stance==="sit"?"앉은":"선";
     showBanner(`이제 ${label} 자세를 기억할 차례예요!`, "info", 3200);
     speak(`이제 ${label} 자세를 기억할 차례예요! 바른 자세를 잡으면 자동으로 찰칵 할게요!`, "chime");
     lastHint=performance.now();
   }
-  const fails=gateCheck({...m, view, stance});
+  waitT+=dt;
+  const sc=devScore(m);
+  if(sc<bestScore){ bestScore=sc; bestM={...m}; }
+  const fails=gateCheck({...m, view, stance}, settings.gate);
   const now=performance.now();
 
-  if(cdT>=0){ /* 카운트다운 진행 중 */
-    if(fails.length>0){ cancelCountdown(true); }
+  if(cdT>=0){ /* 카운트다운 진행 중 — 미세한 흔들림은 봐줘요 */
+    const holdFails=gateCheck({...m, view, stance}, settings.gate*1.15);
+    if(holdFails.length>0){ cancelCountdown(true); }
     else{
       cdT+=dt;
       const n=Math.floor(cdT);
@@ -693,6 +725,7 @@ function autoCalTick(m, dt){
     if(autoHold>=1.2){ cdT=0; cdSpoken=-1; }
   } else {
     autoHold=Math.max(0, autoHold-dt*2);
+    if(waitT>25 && bestM){ saveBest(); return; }  /* 오래 애썼다면 최선의 순간으로! */
     const fix=GATE_FIX[fails[0]];
     setState("info","바른 자세를 잡아 봐요!", fix);
     if(now-lastHint>12000){
@@ -701,6 +734,18 @@ function autoCalTick(m, dt){
       speak(fix);
     }
   }
+}
+/* 합격은 못 했어도 — 관찰한 것 중 가장 예쁜 순간을 '오늘의 최선'으로 저장 */
+function saveBest(){
+  const b={};
+  for(const key of SMOOTH){ b[key]=bestM[key]; }
+  b.hipsOk=bestM.hipsOk; b.legsOk=bestM.legsOk;
+  b.view=view; b.stance=stance;
+  baselines[stance]=b;
+  rules.forEach(r=>{ r.acc=0; });
+  armedKey=""; waitT=0; bestM=null; bestScore=Infinity;
+  showBanner("💚 오늘의 최선 자세를 기억했어요!", "praise", 4200);
+  speak("괜찮아요! 지금까지 중에 가장 예쁜 자세를 기억했어요. 여기서부터 조금씩 좋아지면 돼요!", "chime");
 }
 
 function processFrame(lm, dt){
@@ -863,6 +908,25 @@ btnFlip.addEventListener("click", async ()=>{
   try{ await startCamera(); }catch(e){ cameraError(e); }
 });
 
+/* ───────── 앉기/서기 직접 선택 ───────── */
+function setStance(s){
+  if(stance===s) return;
+  stance=s;
+  modeSit.classList.toggle("on", s==="sit");
+  modeStand.classList.toggle("on", s==="stand");
+  cancelCountdown(false); armedKey=""; autoHold=0;
+  rules.forEach(r=>{ r.acc=0; });
+  if(running){
+    const b=baselines[s];
+    if(b && b.view===view){
+      speak(s==="sit" ? "앉은 자세를 지켜볼게요!" : "선 자세를 지켜볼게요!", "chime");
+    }
+    /* 기준이 없으면 자동 저장 모드가 알아서 안내해요 */
+  }
+}
+modeSit.addEventListener("click", ()=>setStance("sit"));
+modeStand.addEventListener("click", ()=>setStance("stand"));
+
 /* ───────── 기준 저장: 안내 → 촬영 → 합격 검사 → (불합격 시 재도전) ───────── */
 async function captureOnce(){
   calibrating=true; calibBuf=[];
@@ -910,6 +974,13 @@ function bindRange(id, outId, field, suffix){
   });
 }
 bindRange("setSens","outSens","sens","");
+const GATE_LEVELS={ gateStrict:1.0, gateNormal:1.35, gateEasy:1.8 };
+for(const gid of Object.keys(GATE_LEVELS)){
+  $(gid).addEventListener("click", ()=>{
+    settings.gate=GATE_LEVELS[gid];
+    for(const j of Object.keys(GATE_LEVELS)) $(j).classList.toggle("on", j===gid);
+  });
+}
 bindRange("setSustain","outSustain","sustain","초");
 bindRange("setCooldown","outCooldown","cooldown","초");
 $("setVoice").checked=settings.voice;
