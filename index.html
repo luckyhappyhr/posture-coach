@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>바른자세 센터 키우기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  :root{
+    --bg:#F3FAF4; --card:#FFFFFF; --line:#DFEEE2; --ink:#25443B; --muted:#7FA294;
+    --green:#3FB27F; --green-soft:#DFF5EA; --coral:#FF8B7A; --coral-soft:#FFE9E5;
+    --sun:#FFC94D; --sky:#6FB9F2; --sky-soft:#E4F2FD; --round:20px;
+    --jua:"Jua", "Pretendard Variable", sans-serif;
+    --sans:"Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    padding:14px 14px calc(24px + env(safe-area-inset-bottom));
+    max-width:720px; margin:0 auto;
+  }
+  .top{ display:flex; align-items:center; justify-content:space-between; margin:2px 2px 12px; }
+  .brand{ font-family:var(--jua); font-size:21px; letter-spacing:-0.01em; }
+  .brand span{ color:var(--green); }
+  .pill{ font-size:12px; color:var(--muted); background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:5px 11px; white-space:nowrap; font-weight:600; }
+  .pill.on{ color:var(--green); border-color:var(--green); background:var(--green-soft); }
+
+  .hero{ background:var(--card); border:1.5px solid var(--line); border-radius:var(--round); padding:14px 16px; display:flex; align-items:center; gap:14px; margin-bottom:12px; box-shadow:0 4px 14px rgba(63,178,127,.08); }
+  @keyframes bounce{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07) translateY(-3px); } }
+  .heroBody{ flex:1; min-width:0; }
+  .heroTitle{ font-family:var(--jua); font-size:19px; }
+  .heroTitle b{ color:var(--green); margin-right:6px; }
+  .barTrack{ height:12px; background:var(--green-soft); border-radius:999px; margin:7px 0 5px; overflow:hidden; }
+  .barFill{ height:100%; width:0%; background:linear-gradient(90deg,var(--green),#6BD8A8); border-radius:999px; transition:width .6s ease; }
+  .heroNext{ font-size:12px; color:var(--muted); font-weight:600; }
+  .centerScene{ background:linear-gradient(#E3F3FF,#F3FAF4 72%); border:1.5px solid var(--line); border-radius:16px; padding:8px 12px 0; text-align:center; }
+  .sky{ font-size:14px; text-align:right; opacity:.8; }
+  .roofSign{ display:none; font-family:var(--jua); font-size:13px; background:#FFF3D6; border:1.5px solid var(--sun); border-radius:10px; padding:4px 10px; margin:2px auto 4px; width:fit-content; }
+  .floor{ background:#FFFDF6; border:1.5px solid #EADFC8; border-radius:10px; margin:4px auto; padding:6px 10px; font-size:22px; letter-spacing:2px; max-width:290px; }
+  .floor.pop{ animation:popIn .5s ease; }
+  @keyframes popIn{ 0%{ transform:scale(.6); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  .ground{ height:5px; background:#8FBF8F; border-radius:99px; margin:6px -12px 0; }
+  .basementF{ background:#EFEAE2; border-style:dashed; opacity:.95; margin-top:6px; margin-bottom:12px; }
+  .centerDesc{ font-size:12.5px; color:var(--muted); font-family:var(--sans); font-weight:600; margin-left:8px; }
+  .pts{ color:var(--green); font-family:var(--jua); }
+  .screen{ display:none; }
+  .screen.on{ display:block; }
+  .cta{ width:100%; margin-top:12px; font-size:18px; padding:16px; }
+  .playTop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .playTop button{ font-size:14px; padding:10px 14px; border-radius:12px; }
+  .playTop .pts{ font-size:17px; }
+  .yard{ font-size:20px; letter-spacing:3px; margin-top:4px; }
+  .centerScene.glow{ box-shadow:0 0 0 3px #FFE7A8, 0 6px 18px rgba(255,201,77,.35); border-color:var(--sun); }
+  .shopGrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .shopItem{ display:flex; align-items:center; gap:8px; padding:10px; border-radius:12px; }
+  .shopItem .se{ font-size:22px; }
+  .shopItem .sn{ flex:1; text-align:left; font-family:var(--sans); font-weight:700; font-size:13px; }
+  .shopItem .sc{ font-family:var(--jua); font-size:12.5px; color:var(--green); }
+  .shopItem.owned{ background:var(--green-soft); border-color:var(--green); opacity:.85; }
+  .shopItem.owned .sc{ color:var(--muted); }
+
+  .stage{ position:relative; width:100%; aspect-ratio:3/4; max-height:60vh; background:#0d1712; border-radius:24px; overflow:hidden; outline:5px solid var(--line); outline-offset:-5px; transition:outline-color .35s ease; }
+  @media (min-width:560px){ .stage{ aspect-ratio:4/3; } }
+  .stage.good{ outline-color:var(--green); animation:breath 3.2s ease-in-out infinite; }
+  .stage.bad{ outline-color:var(--coral); animation:alarm 1s ease-in-out infinite; }
+  .stage.info{ outline-color:var(--sky); }
+  @keyframes breath{ 0%,100%{ outline-width:5px; } 50%{ outline-width:9px; } }
+  @keyframes alarm{ 0%,100%{ outline-width:6px; } 50%{ outline-width:12px; } }
+  @media (prefers-reduced-motion: reduce){ .stage.good,.stage.bad{ animation:none; } }
+  .stage video,.stage canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .stage .mirror{ transform:scaleX(-1); }
+
+  .placeholder{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px; background:linear-gradient(180deg,#EAF7EF,#DFF2E6); color:var(--ink); }
+  .placeholder .big{ font-size:44px; }
+  .placeholder h2{ margin:0; font-family:var(--jua); font-size:19px; }
+  .placeholder p{ margin:0; color:#5D7F72; font-size:13.5px; line-height:1.7; }
+
+  .banner{ position:absolute; left:12px; right:12px; bottom:12px; background:rgba(255,255,255,.94); border:2px solid var(--line); border-radius:16px; padding:12px 14px; text-align:center; font-family:var(--jua); font-size:clamp(17px, 5.2vw, 24px); line-height:1.35; opacity:0; transform:translateY(8px); transition:all .25s ease; pointer-events:none; }
+  .banner.show{ opacity:1; transform:translateY(0); }
+  .banner.bad{ color:#D9564A; border-color:var(--coral); background:var(--coral-soft); }
+  .banner.info{ color:#2F7CC0; border-color:var(--sky); background:var(--sky-soft); }
+  .banner.praise{ color:#B07A00; border-color:var(--sun); background:#FFF6DF; }
+
+  .trust{ text-align:center; font-size:11.5px; color:var(--muted); margin:8px 2px 0; font-weight:600; }
+
+  .status{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:12px 2px 4px; }
+  .statusWord{ font-family:var(--jua); font-size:clamp(22px, 6.4vw, 30px); line-height:1.2; }
+  .statusWord.good{ color:var(--green); } .statusWord.bad{ color:#E2695C; } .statusWord.info{ color:#3E8CCB; }
+  .statusSub{ color:var(--muted); font-size:13px; margin-top:2px; font-weight:600; }
+  .badges{ display:flex; gap:6px; flex-shrink:0; }
+  .badge{ font-size:12px; font-weight:700; color:#54796C; background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:5px 9px; }
+
+  .controls{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:8px; margin-top:12px; }
+  .modeRow{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .modeBtn{ font-size:17px; padding:13px 8px; border-radius:16px; }
+  .modeBtn.on{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
+  button{ font-family:var(--jua); font-size:16px; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:16px; padding:14px 8px; cursor:pointer; touch-action:manipulation; }
+  button:active{ transform:scale(.97); }
+  button.primary{ background:var(--green); border-color:var(--green); color:#fff; }
+  button.primary.stop{ background:var(--coral); border-color:var(--coral); }
+  button:disabled{ opacity:.45; cursor:default; }
+  button:focus-visible{ outline:3px solid var(--sky); outline-offset:2px; }
+
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .stat{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:10px 12px; text-align:center; }
+  .stat b{ display:block; font-family:var(--jua); font-size:19px; color:var(--ink); }
+  .stat span{ font-size:11.5px; color:var(--muted); font-weight:600; }
+
+  .card{ background:var(--card); border:1.5px solid var(--line); border-radius:var(--round); padding:13px 15px; margin-top:10px; }
+  .card h3{ margin:0 0 8px; font-family:var(--jua); font-size:15px; }
+  .log{ list-style:none; margin:0; padding:0; font-size:13.5px; }
+  .log li{ display:flex; gap:10px; padding:5px 0; border-bottom:1.5px dashed var(--line); }
+  .log li:last-child{ border-bottom:none; }
+  .log time{ color:var(--muted); font-size:12px; flex-shrink:0; padding-top:1px; font-weight:700; }
+  .log .empty{ color:var(--muted); border:none; }
+
+  details.card{ padding:0; overflow:hidden; }
+  details.card summary{ padding:13px 15px; font-family:var(--jua); font-size:15px; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  details.card summary::after{ content:"▾"; color:var(--muted); transition:transform .2s; }
+  details.card[open] summary::after{ transform:rotate(180deg); }
+  .cardBody{ padding:2px 15px 15px; display:flex; flex-direction:column; gap:13px; }
+  .tipList{ margin:0; padding:0; list-style:none; font-size:13.5px; line-height:1.75; color:#42655A; }
+  .tipList li::before{ content:"🍀 "; }
+  .tipTitle{ font-family:var(--jua); font-size:14px; margin:4px 0 2px; }
+
+  .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .row label{ font-size:13.5px; font-weight:700; }
+  .row small{ display:block; color:var(--muted); font-size:11.5px; margin-top:2px; font-weight:500; }
+  input[type=range]{ width:44%; accent-color:var(--green); }
+  input[type=checkbox]{ width:22px; height:22px; accent-color:var(--green); }
+  .row output{ font-size:12.5px; color:var(--muted); min-width:44px; text-align:right; font-weight:700; }
+  .miniBtns{ display:flex; gap:8px; }
+  .miniBtns button{ font-size:14px; padding:10px 12px; border-radius:12px; flex:1; }
+  .seg{ display:flex; gap:6px; }
+  .seg button{ flex:1; font-size:13.5px; padding:10px 6px; border-radius:12px; }
+  .seg button.on{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
+  .diag{ font-family:ui-monospace, monospace; font-size:11px; color:var(--muted); line-height:1.8; word-break:break-all; }
+  .foot{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:16px; line-height:1.7; font-weight:500; }
+
+  .confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:50; }
+  .confetti i{ position:absolute; top:-40px; font-style:normal; font-size:22px; will-change:transform; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">바른자세 <span>센터 키우기</span> 🏢</div>
+  <div class="pill" id="pillState">쉬는 중</div>
+</header>
+
+<div class="screen on" id="homeScreen">
+<div class="hero" style="flex-direction:column; align-items:stretch; gap:10px;">
+  <div class="centerScene" id="scene">
+    <div class="sky" id="skyRow">⛅ ☁️</div>
+    <div class="roofSign" id="roofSign">🏥 바른자세 헬스케어센터</div>
+    <div id="floors"></div>
+    <div class="ground"></div>
+    <div class="yard" id="yard" style="display:none"></div>
+    <div class="floor basementF" id="basement">🧘</div>
+  </div>
+  <div class="heroBody">
+    <div class="heroTitle"><b id="centerName">지하 연습방</b><span id="centerDesc" class="centerDesc"></span></div>
+    <div class="barTrack"><div class="barFill" id="upgradeBar"></div></div>
+    <div class="heroNext"><span id="upgradeHint">바른 자세로 포인트를 모아요!</span> · 보유 <b id="ptsNow" class="pts">0P</b></div>
+  </div>
+  <button class="primary" id="upgradeBtn" style="display:none">🔨 확장</button>
+</div>
+
+<details class="card" open>
+  <summary>🛍️ 꾸미기 상점 <span id="shopCount" class="centerDesc"></span></summary>
+  <div class="cardBody">
+    <div class="shopGrid" id="shopGrid"></div>
+    <div class="heroNext">아이템을 사면 센터 그림에 바로 나타나요!</div>
+  </div>
+</details>
+
+<button class="primary cta" id="goPlay">🏃 포인트 모으러 가기</button>
+</div><!-- /homeScreen -->
+
+<div class="screen" id="playScreen">
+<div class="playTop">
+  <button id="goHome">🏠 센터로 돌아가기</button>
+  <span class="pts" id="ptsMini">0P</span>
+</div>
+
+<div class="stage info" id="stage">
+  <video id="cam" class="mirror" playsinline muted></video>
+  <canvas id="overlay" class="mirror"></canvas>
+  <div class="placeholder" id="placeholder">
+    <div class="big">🏢✨</div>
+    <h2>바른 자세로 센터를 키워요!</h2>
+    <p>카메라는 <b>살짝 비스듬한 옆모습</b>이 최고예요!<br>
+       (귀-어깨-골반 줄서기 + 짝다리까지 다 보여요)<br><br>
+       바른 자세를 오래 지킬수록 포인트가 쌓이고<br>
+       지하 홈트방이 헬스케어센터로 자라나요! 💚</p>
+  </div>
+  <div class="banner" id="banner"></div>
+</div>
+<div class="trust">📷 영상은 절대 저장되지 않아요 — 기기 안에서만 보고 바로 사라져요</div>
+
+<div class="status">
+  <div>
+    <div class="statusWord info" id="statusWord">준비됐어요</div>
+    <div class="statusSub" id="statusSub">시작을 누르면 함께해요!</div>
+  </div>
+  <div class="badges">
+    <div class="badge" id="badgeView">각도 —</div>
+  </div>
+</div>
+
+<div class="modeRow">
+  <button class="modeBtn on" id="modeSit">🪑 앉아서</button>
+  <button class="modeBtn" id="modeStand">🧍 서서</button>
+</div>
+
+<div class="controls">
+  <button class="primary" id="btnStart">시작</button>
+  <button id="btnCalib" disabled>자세 연습</button>
+  <button id="btnFlip" disabled>카메라 전환</button>
+</div>
+
+<div class="stats">
+  <div class="stat"><b id="statSession">0분 0초</b><span>이번 바른자세 시간</span></div>
+  <div class="stat"><b id="statStars">+0P</b><span>오늘 번 포인트</span></div>
+  <div class="stat"><b id="statStreak">0초</b><span>연속 기록</span></div>
+</div>
+
+<div class="card">
+  <h3>🗒️ 코치의 한마디 기록</h3>
+  <ul class="log" id="log"><li class="empty">아직 조용~해요. 잘하고 있다는 뜻이에요!</li></ul>
+</div>
+
+<details class="card">
+  <summary>📖 바른 자세 비법 노트</summary>
+  <div class="cardBody">
+    <div>
+      <div class="tipTitle">📐 다림줄 검사가 뭐예요?</div>
+      <ul class="tipList">
+        <li>옆에서 봤을 때 <b>귀-어깨-골반</b>이 수직 한 줄이면 바른 자세!</li>
+        <li>서 있을 땐 <b>발목 위</b>에 골반까지 쌓여야 해요 (배 내밀기 금지!)</li>
+        <li>화면의 점선이 다림줄이에요 — 줄에서 벗어나면 알려 드려요</li>
+      </ul>
+    </div>
+    <div>
+      <div class="tipTitle">🪑 앉을 때는 이렇게!</div>
+      <ul class="tipList">
+        <li>엉덩이를 의자 깊숙이 쏙~ 넣어요</li>
+        <li>두 발바닥은 바닥에 나란히 11자로!</li>
+        <li>어깨는 뒤로 한 바퀴 돌려서 사르르 내려놓아요</li>
+        <li>그다음 정수리가 하늘에 닿게 키를 쭈욱!</li>
+        <li>턱은 살짝 당기고 시선은 정면으로</li>
+        <li>다리는 꼬지 않기로 약속해요</li>
+      </ul>
+    </div>
+    <div>
+      <div class="tipTitle">🧍 서 있을 때는 이렇게!</div>
+      <ul class="tipList">
+        <li>두 발을 어깨너비만큼 벌리고, 두 다리에 골고루 힘!</li>
+        <li>무릎은 둘 다 쭉~ (짝다리 금지!)</li>
+        <li>갈비뼈는 살짝 닫고, 아랫배는 배꼽 쪽으로 쓰윽 끌어올려요</li>
+        <li>어깨를 뒤로 돌려 내리고, 정수리는 하늘로!</li>
+      </ul>
+    </div>
+    <div>
+      <div class="tipTitle">⏰ 잊지 마세요!</div>
+      <ul class="tipList">
+        <li>30분마다 한 번씩 일어나 기지개를 쭉~ 켜요</li>
+        <li>짝다리는 두 다리가 다 보여야 잡아요 — 살짝 비스듬한 옆이 딱!</li>
+        <li>어깨 수평·다리 꼬기는 정면에서 잘 보여요</li>
+      </ul>
+    </div>
+  </div>
+</details>
+
+<details class="card">
+  <summary>⚙️ 설정</summary>
+  <div class="cardBody">
+    <div class="row" style="margin-bottom:-6px">
+      <label>기준 검사 강도<small>몸이 굳어 있다면 '편안하게'로!</small></label>
+    </div>
+    <div class="seg">
+      <button id="gateStrict">엄격</button>
+      <button id="gateNormal" class="on">보통</button>
+      <button id="gateEasy">편안하게</button>
+    </div>
+    <div class="row">
+      <label>민감도<small>높을수록 작은 흐트러짐도 잡아요</small></label>
+      <input type="range" id="setSens" min="1" max="9" step="1" value="5">
+      <output id="outSens">5</output>
+    </div>
+    <div class="row">
+      <label>알려주기까지 기다리는 시간<small>이만큼 흐트러지면 말해 줘요</small></label>
+      <input type="range" id="setSustain" min="1" max="10" step="1" value="2">
+      <output id="outSustain">2초</output>
+    </div>
+    <div class="row">
+      <label>같은 말 반복 간격<small>잔소리가 되지 않게요</small></label>
+      <input type="range" id="setCooldown" min="5" max="60" step="5" value="15">
+      <output id="outCooldown">15초</output>
+    </div>
+    <div class="row">
+      <label>음성으로 알려주기</label>
+      <input type="checkbox" id="setVoice" checked>
+    </div>
+    <div class="miniBtns">
+      <button id="btnTestVoice">🔊 목소리 듣기</button>
+      <button id="btnResetScore">🏚️ 처음부터 다시 짓기</button>
+    </div>
+    <div>
+      <h3 style="margin-bottom:4px">🔍 실시간 지표 (어른용)</h3>
+      <div class="diag" id="diag">시작하면 표시돼요</div>
+    </div>
+  </div>
+</details>
+
+</div><!-- /playScreen -->
+
+<p class="foot">카메라 영상과 자세 정보는 어디에도 저장·전송되지 않아요.<br>기기에는 <b>센터 진행상황(포인트·건물 단계·꾸미기·누적 시간)</b>만 남아요. 🏢</p>
+
+<script type="module">
+import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+/* ───────── 상수 ───────── */
+const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
+const MODEL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
+const KEY = "postureCenter.v1";
+const OLD_KEY = "postureTree.growth";
+const I = { NOSE:0, LEAR:7, REAR:8, LSH:11, RSH:12, LHIP:23, RHIP:24, LKNEE:25, RKNEE:26, LANK:27, RANK:28 };
+
+/* 절대 한계 — 기준과 무관하게 명백히 나쁜 자세 (모니터링용) */
+const ABS = { turtle:0.30, shHip:0.28, sway:0.28, tiltDeg:12 };
+/* 기준 합격 검사 — 이걸 통과해야 기준으로 저장돼요 */
+const GATE = {
+  side:  { earSh:0.15, shHip:0.12, pitch:0.32, shiftStand:0.18 },
+  front: { tilt:5, headRoll:6 },
+  stand: { kneeAsym:12 },
+};
+
+/* ───────── 센터 성장 단계 (타이쿤) ───────── */
+const STAGES = [
+  { cost:0,    name:"지하 연습방",          desc:"매트 한 장으로 시작!",         floors:[],                                              basement:"🧘🟩" },
+  { cost:300,  name:"지하 스튜디오",        desc:"거울과 음악이 생겼어요",        floors:[],                                              basement:"🎵🧘🪞" },
+  { cost:800,  name:"1층 자세 교실",        desc:"첫 수강생 세 명!",             floors:["🧍🧍🧍🚪"],                                     basement:"🧘🪞" },
+  { cost:1600, name:"1층 넓은 교실",        desc:"소문 듣고 수강생이 늘었어요",    floors:["🧍🧍🧍🧍🧍🚪"],                                 basement:"🧘🪞" },
+  { cost:3000, name:"2층 스튜디오",         desc:"요가·스트레칭 반 개설!",        floors:["🤸🧘🧎","🧍🧍🧍🧍🚪"],                          basement:"📦🧘" },
+  { cost:5000, name:"3층 필라테스관",       desc:"기구 필라테스까지 들어왔어요!",  floors:["🧘‍♀️🛠️🧘","🤸🧎🧍","🧍🧍🧍🧍🚪"],               basement:"📦" },
+];
+/* ───────── 꾸미기 아이템 (센터 그림에 바로 나타나요) ───────── */
+const DECOS = [
+  { id:"pot",     e:"🪴", name:"화분",          cost:50,  slot:"room" },
+  { id:"frame",   e:"🖼️", name:"액자",          cost:80,  slot:"room" },
+  { id:"balloon", e:"🎈", name:"풍선",          cost:100, slot:"sky"  },
+  { id:"mirror",  e:"🪞", name:"큰 거울",       cost:120, slot:"room" },
+  { id:"dog",     e:"🐕", name:"강아지 손님",   cost:150, slot:"yard" },
+  { id:"flower",  e:"🌷", name:"꽃밭",          cost:200, slot:"yard" },
+  { id:"bike",    e:"🚲", name:"자전거 거치대", cost:250, slot:"yard" },
+  { id:"cafe",    e:"☕", name:"웰컴 카페",     cost:300, slot:"yard" },
+  { id:"cat",     e:"🐈", name:"고양이 직원",   cost:400, slot:"yard" },
+  { id:"lights",  e:"✨", name:"반짝 조명",     cost:500, slot:"frame"},
+  { id:"fountain",e:"⛲", name:"미니 분수",     cost:600, slot:"yard" },
+  { id:"rainbow", e:"🌈", name:"무지개 깃발",   cost:800, slot:"sky"  },
+];
+/* ───────── 긍정 피드백 멘트 ───────── */
+const RECOVER_LINES = [
+  "좋아졌어요! 바로 그 자세예요!",
+  "우와, 금방 고쳤네요! 정말 멋져요!",
+  "그렇죠! 등이 쭉 펴졌어요, 최고예요!",
+];
+const ENCOURAGE_LINES = [
+  "좋아요, 계속 유지해 보아요!",
+  "바른 자세예요! 정말 멋져요!",
+  "이 느낌 그대로! 아주 좋아요!",
+  "허리가 꼿꼿! 오늘도 최고예요!",
+];
+
+/* ───────── 귀여운 멘트 ───────── */
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const GREETINGS = [
+  "안녕하세요, 원장님! 오늘도 바른 자세로 센터를 키워 봐요!",
+  "수강생들이 원장님을 기다려요! 바르게 앉으면 포인트가 쌓여요!",
+  "반가워요! 허리를 펴면 센터가 쑥쑥 자라나요!",
+];
+const RULE_LINES = {
+  turtle: [
+    "거북이처럼 목이 쑥 나왔어요! 뒤통수를 뒤로 스르륵 당겨 볼까요?",
+    "귀가 어깨보다 앞에 있어요. 턱을 살짝 당기면 다림줄에 쏙 들어와요!",
+  ],
+  slouch: [
+    "등이 조금 굽었어요. 정수리가 하늘에 닿는다고 생각하며 쭉 펴 볼까요?",
+    "허리를 곧게 세워 볼까요? 엉덩이를 의자 깊숙이 넣으면 훨씬 쉬워요!",
+    "몸이 앞으로 기울었어요. 등을 펴고 화면과 조금 멀어져요!",
+  ],
+  belly: [
+    "배가 살짝 나왔어요. 배꼽을 등 쪽으로 쏘옥~ 당겨 볼까요?",
+    "골반이 앞으로 나왔어요. 배에 살짝 힘을 주면 멋진 자세가 돼요!",
+  ],
+  sway: [
+    "골반이 앞으로 쑥 나왔어요! 엉덩이를 살짝 뒤로 보내 볼까요?",
+    "배를 내밀고 서 있네요. 갈비뼈를 닫고 아랫배를 쓰윽 끌어올려요!",
+  ],
+  head: [
+    "고개가 푹 숙여졌어요. 턱을 살짝 당기고 시선은 정면으로!",
+    "화면을 너무 가까이 보고 있어요. 고개를 들어 볼까요?",
+  ],
+  shoulder: [
+    "어깨가 쑥 올라갔어요. 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
+    "어깨에 힘이 들어갔나 봐요. 귀와 어깨 사이를 멀~리 떨어뜨려요!",
+  ],
+  tilt: [
+    "어깨가 한쪽으로 기울었어요. 저울처럼 수평을 맞춰 볼까요?",
+    "몸이 살짝 삐딱해졌어요. 양쪽 어깨 높이를 똑같이!",
+  ],
+  cross: [
+    "앗, 다리를 꼬았네요! 두 발을 바닥에 나란히 놓아 볼까요?",
+    "다리는 꼬지 않기로 해요. 무릎과 발을 11자로 예쁘게!",
+  ],
+  weight: [
+    "짝다리 금지! 두 다리에 사이좋게 힘을 나눠요!",
+    "한쪽 다리에 기대고 있어요. 두 무릎을 똑같이 쭉 펴 볼까요?",
+    "몸이 한쪽으로 쏠렸어요. 씩씩하게 균형을 잡아요!",
+  ],
+};
+/* ───────── 자세 챌린지: 연속 유지 시간마다 포인트! (초반은 쉽게) ───────── */
+const CHALLENGE = [
+  { t:5,  p:5  },
+  { t:10, p:10 },
+  { t:20, p:20 },
+  { t:30, p:30 },
+  { t:60, p:60 },
+];
+/* 어깨를 내린 '다음' 등을 다시 세우도록 순서를 짰어요 */
+const CAL_SIT = [
+  "자, 바른 자세 연습을 시작할게요!",
+  "엉덩이를 의자 깊숙이 쏘옥 넣어요.",
+  "두 발바닥은 바닥에 사이좋게 나란히!",
+  "어깨를 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
+  "이제 정수리가 하늘에 닿도록 키를 쭈욱 키워요!",
+  "턱을 살짝 당기고 정면을 바라봐요.",
+  "그대로 멈춰요! 찰칵 준비~",
+];
+const CAL_STAND = [
+  "자, 멋지게 서는 연습을 해 볼게요!",
+  "두 발을 어깨너비만큼 벌리고, 두 무릎을 똑같이 쭉 펴요.",
+  "갈비뼈를 아래로 살짝 닫고, 아랫배는 위로 쓰윽 끌어올려요!",
+  "어깨를 뒤로 한 바퀴 돌려서 사르르 내려놓아요.",
+  "정수리가 하늘에 닿도록 키를 쭈욱 키워요!",
+  "턱을 살짝 당기고 먼 곳을 바라봐요.",
+  "그대로 멈춰요! 찰칵 준비~",
+];
+/* 합격 검사에서 떨어졌을 때 — 무엇을 고칠지 콕 집어 알려줘요 */
+const GATE_FIX = {
+  earSh:    "아직 목이 앞으로 나와 있어요. 뒤통수를 뒤로~ 턱은 살짝 당겨요!",
+  shHip:    "아직 등이 굽어 있어요. 정수리를 하늘로 쭈욱 키워요!",
+  pitch:    "고개가 숙여져 있어요. 시선을 들어 정면을 봐요!",
+  shiftStand:"골반이 발보다 앞에 있어요. 엉덩이를 살짝 뒤로 보내요!",
+  kneeAsym: "짝다리로 서 있어요! 두 무릎을 똑같이 쭉 펴요!",
+  tilt:     "어깨가 한쪽으로 기울어 있어요. 저울처럼 수평으로!",
+  headRoll: "고개가 갸웃 기울었어요. 반듯하게 세워 볼까요?",
+};
+
+/* ───────── 저장: 센터 진행상황 (포인트·건물 단계·누적 시간) ───────── */
+function loadGame(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||"null");
+    if(d) return { pts:Math.max(0,+d.pts||0), stage:Math.min(STAGES.length-1, Math.max(0,+d.stage||0)), tg:Math.max(0,+d.tg||0), tut:!!d.tut, deco:Array.isArray(d.deco)?d.deco.filter(x=>DECOS.some(k=>k.id===x)):[] };
+  }catch(e){}
+  try{ /* 예전 '자세나무' 기록이 있으면 포인트로 이사와요 */
+    const old=Math.max(0, Number(JSON.parse(localStorage.getItem(OLD_KEY)||"0"))||0);
+    if(old>0) return { pts:Math.floor(old/5), stage:0, tg:old, tut:true, deco:[] };
+  }catch(e){}
+  return { pts:0, stage:0, tg:0, tut:false, deco:[] };
+}
+function saveGame(){ try{ localStorage.setItem(KEY, JSON.stringify({ pts:Math.floor(game.pts), stage:game.stage, tg:Math.round(game.tg), tut:game.tut, deco:game.deco })); }catch(e){} }
+
+/* ───────── 상태 ───────── */
+const settings = { sens:5, sustain:2, cooldown:15, voice:true, gate:1.35 };
+const baselines = { sit:null, stand:null };
+let game = loadGame();
+let sessionPts = 0;
+
+let landmarker=null, stream=null, running=false, facing="user";
+let wakeLock=null, audioCtx=null;
+let stance="sit", view="front";
+let ema=null, lastFrameT=0, calibrating=false, calibBuf=null;
+let scripting=false, autoHold=0, cdT=-1, cdSpoken=-1, lastHint=0, lastCancel=0, armedKey="";
+let waitT=0, bestScore=Infinity, bestM=null;
+let sessionGood=0, streak=0, badHold=0, comboIdx=0, bannerTimer=0;
+let goodHold=0, encourageT=0, hadIssue=false;
+
+/* ───────── 엘리먼트 ───────── */
+const $ = id => document.getElementById(id);
+const video=$("cam"), canvas=$("overlay"), ctx=canvas.getContext("2d");
+const stage=$("stage"), placeholder=$("placeholder"), banner=$("banner");
+const statusWord=$("statusWord"), statusSub=$("statusSub"), pill=$("pillState");
+const badgeView=$("badgeView");
+const modeSit=$("modeSit"), modeStand=$("modeStand");
+const btnStart=$("btnStart"), btnCalib=$("btnCalib"), btnFlip=$("btnFlip");
+const logEl=$("log"), diag=$("diag");
+
+/* ───────── 판정 규칙 (뷰별로 의미 있는 것만) ─────────
+   상대 검사(기준 대비) + 절대 검사(다림줄 한계)를 함께 봐요 */
+const kOf = () => 1.6 - 0.12*settings.sens;
+const rules = [
+  { id:"turtle", when:(m,b,k)=> view==="side" && ((m.earShDx-b.earShDx)*m.facingSign > 0.12*k || m.earShDx*m.facingSign > Math.max(ABS.turtle, b.earShDx*m.facingSign+0.10)) },
+  { id:"slouch", when:(m,b,k)=> view==="side"
+      ? m.hipsOk && ((m.torsoDx-b.torsoDx)*m.facingSign > 0.10*k || m.torsoDx*m.facingSign > Math.max(ABS.shHip, b.torsoDx*m.facingSign+0.10))
+      : m.faceRatio > b.faceRatio*(1+0.16*k) },
+  { id:"belly", when:(m,b,k)=> view==="side" && m.hipsOk && (m.torsoDx-b.torsoDx)*m.facingSign < -0.11*k },
+  { id:"sway", when:(m,b,k)=> stance==="stand" && view==="side" && m.legsOk &&
+      ((m.shift-(b.shift??0))*m.facingSign > 0.12*k || m.shift*m.facingSign > Math.max(ABS.sway, (b.shift??0)*m.facingSign+0.10)) },
+  { id:"head", when:(m,b,k)=> (m.pitch-b.pitch) > 0.12*k },
+  { id:"shoulder", when:(m,b,k)=> m.neck < b.neck*(1-0.14*k) && (m.pitch-b.pitch) < 0.08 },
+  { id:"tilt", when:(m,b,k)=> view==="front" && (Math.abs(m.tilt-b.tilt) > 8*k || Math.abs(m.tilt) > Math.max(ABS.tiltDeg, Math.abs(b.tilt)+6)) },
+  { id:"cross", when:(m,b,k)=> stance==="sit" && view==="front" && m.legsOk && m.ankOrder < -0.25 },
+  { id:"weight", when:(m,b,k)=> stance==="stand" && m.legsOk && (
+      (view==="front" && Math.abs(m.shift-(b.shift??0)) > 0.09*k) ||
+      (m.kneeAsym-(b.kneeAsym??0)) > 12*k ||
+      (m.hipDrop-(b.hipDrop??0)) > 0.05*k ) },
+];
+rules.forEach(r => { r.acc=0; r.lastFire=0; });
+
+/* ───────── 유틸 ───────── */
+const mid=(a,b)=>({x:(a.x+b.x)/2, y:(a.y+b.y)/2});
+const dist=(a,b)=>Math.hypot(a.x-b.x, a.y-b.y);
+function jointAngle(a,b,c){
+  const v1={x:a.x-b.x,y:a.y-b.y}, v2={x:c.x-b.x,y:c.y-b.y};
+  const dot=v1.x*v2.x+v1.y*v2.y, n=Math.hypot(v1.x,v1.y)*Math.hypot(v2.x,v2.y)||1e-6;
+  return Math.acos(Math.min(1,Math.max(-1,dot/n)))*180/Math.PI;
+}
+const fmtMS = s => `${Math.floor(s/60)}분 ${Math.floor(s%60)}초`;
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+/* ───────── 지표 계산 ───────── */
+function computeMetrics(l){
+  const P=i=>l[i];
+  const vis=(...ids)=>ids.every(i=>(P(i).visibility??1)>0.5);
+  const lsh=P(I.LSH), rsh=P(I.RSH), lear=P(I.LEAR), rear=P(I.REAR), nose=P(I.NOSE);
+  const shC=mid(lsh,rsh), earC=mid(lear,rear);
+  const hipsOk=vis(I.LHIP,I.RHIP);
+  const hipC=hipsOk?mid(P(I.LHIP),P(I.RHIP)):null;
+  const shoulderW=dist(lsh,rsh);
+  const torso=hipsOk?Math.max(dist(shC,hipC),1e-4):shoulderW*1.6;
+
+  const m={hipsOk};
+  m.profile=shoulderW/torso;
+  m.neck=(shC.y-earC.y)/torso;
+  m.pitch=(nose.y-earC.y)/torso;
+  m.faceRatio=dist(lear,rear)/Math.max(shoulderW,1e-4);
+  let a=Math.atan2(rsh.y-lsh.y, rsh.x-lsh.x)*180/Math.PI;
+  if(a>90)a-=180; if(a<-90)a+=180;
+  m.tilt=a;
+  let hr=Math.atan2(rear.y-lear.y, rear.x-lear.x)*180/Math.PI;
+  if(hr>90)hr-=180; if(hr<-90)hr+=180;
+  m.headRoll=hr;
+  m.torsoDx=hipsOk?(shC.x-hipC.x)/torso:0;
+  m.earShDx=(earC.x-shC.x)/torso;
+  m.facingSign=Math.sign(nose.x-earC.x)||1;
+  m.anchorX = hipsOk ? hipC.x : shC.x;
+  m.earC=earC; m.shC=shC; m.hipC=hipC;
+
+  const legsOk=hipsOk&&vis(I.LKNEE,I.RKNEE,I.LANK,I.RANK);
+  m.legsOk=legsOk;
+  if(legsOk){
+    const kneeL=jointAngle(P(I.LHIP),P(I.LKNEE),P(I.LANK));
+    const kneeR=jointAngle(P(I.RHIP),P(I.RKNEE),P(I.RANK));
+    m.kneeAngle=(kneeL+kneeR)/2;
+    m.kneeAsym=Math.abs(kneeL-kneeR);
+    m.hipDrop=Math.abs(P(I.LHIP).y-P(I.RHIP).y)/torso;
+    const ankC=mid(P(I.LANK),P(I.RANK));
+    m.shift=(hipC.x-ankC.x)/torso;
+    if(stance==="stand") m.anchorX=ankC.x;
+    const hipW=Math.abs(P(I.LHIP).x-P(I.RHIP).x)||1e-4;
+    const s=Math.sign(P(I.LHIP).x-P(I.RHIP).x)||1;
+    m.ankOrder=((P(I.LANK).x-P(I.RANK).x)*s)/hipW;
+  } else { m.kneeAngle=null; m.kneeAsym=null; m.hipDrop=null; m.shift=0; m.ankOrder=1; }
+  return m;
+}
+const SMOOTH=["neck","pitch","faceRatio","tilt","headRoll","torsoDx","earShDx","shift","ankOrder","profile","kneeAngle","kneeAsym","hipDrop"];
+function smooth(m){
+  if(!ema){ ema={...m}; return ema; }
+  const A=0.5;
+  for(const key of SMOOTH){
+    if(m[key]==null){ ema[key]=m[key]; continue; }
+    ema[key]=(ema[key]==null)?m[key]:ema[key]*(1-A)+m[key]*A;
+  }
+  ema.hipsOk=m.hipsOk; ema.legsOk=m.legsOk; ema.facingSign=m.facingSign;
+  ema.anchorX=m.anchorX; ema.earC=m.earC; ema.shC=m.shC; ema.hipC=m.hipC;
+  return ema;
+}
+
+/* ───────── 자세/각도 판별 ───────── */
+function updateStanceView(m, dt){
+  if(m.profile<0.45) view="side";
+  else if(m.profile>0.55) view="front";
+  badgeView.textContent = view==="side" ? "📐 옆모습" : "정면";
+}
+
+/* ───────── 기준 합격 검사 ───────── */
+function gateCheck(b, f=1){
+  const fails=[];
+  if(b.view==="side"){
+    if(Math.abs(b.earShDx) > GATE.side.earSh*f) fails.push("earSh");
+    if(b.hipsOk && Math.abs(b.torsoDx) > GATE.side.shHip*f) fails.push("shHip");
+    if(b.pitch > GATE.side.pitch*f) fails.push("pitch");
+    if(b.stance==="stand" && b.legsOk && Math.abs(b.shift) > GATE.side.shiftStand*f) fails.push("shiftStand");
+  } else {
+    if(Math.abs(b.tilt) > GATE.front.tilt*f) fails.push("tilt");
+    if(Math.abs(b.headRoll) > GATE.front.headRoll*f) fails.push("headRoll");
+  }
+  if(b.stance==="stand" && b.legsOk && (b.kneeAsym??0) > GATE.stand.kneeAsym*f) fails.push("kneeAsym");
+  return fails;
+}
+/* 다림줄에서 얼마나 벗어났는지 점수화 — '오늘의 최선' 고르기용 (낮을수록 좋음) */
+function devScore(m){
+  if(view==="side"){
+    let s = Math.abs(m.earShDx)/GATE.side.earSh
+          + (m.hipsOk ? Math.abs(m.torsoDx)/GATE.side.shHip : 0)
+          + Math.max(0, m.pitch)/GATE.side.pitch;
+    if(stance==="stand" && m.legsOk){
+      s += Math.abs(m.shift??0)/GATE.side.shiftStand + (m.kneeAsym??0)/GATE.stand.kneeAsym*0.5;
+    }
+    return s;
+  }
+  return Math.abs(m.tilt)/GATE.front.tilt + Math.abs(m.headRoll)/GATE.front.headRoll;
+}
+
+/* ───────── 화면 상태 ───────── */
+function setState(kind, word, sub){
+  stage.classList.remove("good","bad","info");
+  statusWord.classList.remove("good","bad","info");
+  stage.classList.add(kind); statusWord.classList.add(kind);
+  statusWord.textContent=word;
+  statusSub.textContent=sub||"";
+}
+function showBanner(text, kind, ms=3500){
+  banner.textContent=text;
+  banner.className=`banner show ${kind||""}`;
+  clearTimeout(bannerTimer);
+  bannerTimer=setTimeout(()=>banner.classList.remove("show"), ms);
+}
+
+/* ───────── 소리 & 음성 ───────── */
+function tone(freq, t0, dur, vol=0.22){
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.value=freq; g.gain.value=0.0001;
+  g.gain.exponentialRampToValueAtTime(vol, t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  o.start(t0); o.stop(t0+dur+0.02);
+}
+function ensureAudio(){ try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+function beep(){ try{ ensureAudio(); const t=audioCtx.currentTime; tone(880,t,0.14); tone(660,t+0.12,0.16); }catch(e){} }
+function chime(){ try{ ensureAudio(); const t=audioCtx.currentTime; tone(659,t,0.14,0.18); tone(880,t+0.12,0.18,0.18); }catch(e){} }
+function fanfare(){ try{ ensureAudio(); const t=audioCtx.currentTime; tone(523,t,0.16); tone(659,t+0.15,0.16); tone(784,t+0.3,0.2); tone(1046,t+0.5,0.34,0.26); }catch(e){} }
+function speak(text, pre){
+  if(pre==="beep")beep(); else if(pre==="chime")chime(); else if(pre==="fanfare")fanfare();
+  if(!settings.voice) return;
+  try{
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="ko-KR"; u.rate=1; u.pitch=1.15;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ko"));
+    if(v)u.voice=v;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ───────── 레벨/성장 ───────── */
+function renderCenter(){
+  const s=STAGES[game.stage], n=STAGES[game.stage+1];
+  $("centerName").textContent=s.name;
+  $("centerDesc").textContent=s.desc;
+  $("ptsNow").textContent=Math.floor(game.pts).toLocaleString()+"P";
+  const fl=$("floors");
+  if(fl.childElementCount!==s.floors.length){
+    fl.innerHTML="";
+    s.floors.forEach(f=>{ const d=document.createElement("div"); d.className="floor pop"; d.textContent=f; fl.appendChild(d); });
+  }
+  const dOwn=slot=>DECOS.filter(d=>d.slot===slot&&game.deco.includes(d.id)).map(d=>d.e).join("");
+  $("basement").textContent=s.basement+dOwn("room");
+  $("skyRow").textContent=(dOwn("sky")?dOwn("sky")+"  ":"")+"⛅ ☁️";
+  const y=dOwn("yard"); $("yard").textContent=y; $("yard").style.display=y?"":"none";
+  $("scene").classList.toggle("glow", game.deco.includes("lights"));
+  $("roofSign").style.display = game.stage===STAGES.length-1 ? "block" : "none";
+  const btn=$("upgradeBtn");
+  if(n){
+    btn.style.display="";
+    const ok=game.pts>=n.cost;
+    btn.disabled=!ok;
+    btn.textContent=`🔨 ${n.name}(으)로 확장 — ${n.cost.toLocaleString()}P`;
+    $("upgradeBar").style.width=Math.min(100, game.pts/n.cost*100)+"%";
+    $("upgradeHint").textContent= ok ? "확장할 수 있어요! 버튼을 콕!" : `다음 확장까지 ${(n.cost-Math.floor(game.pts)).toLocaleString()}P`;
+  } else {
+    btn.style.display="none";
+    $("upgradeBar").style.width="100%";
+    $("upgradeHint").textContent="🎉 완공! 온 동네가 바른 자세 명소예요!";
+  }
+}
+$("upgradeBtn").addEventListener("click", ()=>{
+  const n=STAGES[game.stage+1];
+  if(!n || game.pts<n.cost) return;
+  game.pts-=n.cost; game.stage++; saveGame();
+  confetti();
+  showBanner(`🏗️ 공사 완료! ${n.name}!`, "praise", 4500);
+  speak(`공사 완료! ${n.name}까지 커졌어요! 수강생들이 정말 좋아해요!`, "fanfare");
+  renderCenter();
+});
+/* ───────── 꾸미기 상점 ───────── */
+function renderShop(){
+  const g=$("shopGrid"); g.innerHTML="";
+  DECOS.forEach(d=>{
+    const own=game.deco.includes(d.id);
+    const b=document.createElement("button");
+    b.className="shopItem"+(own?" owned":"");
+    b.innerHTML=`<span class="se">${d.e}</span><span class="sn">${d.name}</span><span class="sc">${own?"보유중 ✓":d.cost.toLocaleString()+"P"}</span>`;
+    b.disabled=own||game.pts<d.cost;
+    b.addEventListener("click", ()=>buyDeco(d));
+    g.appendChild(b);
+  });
+  $("shopCount").textContent=`(${game.deco.length}/${DECOS.length})`;
+}
+function updateShopStates(){
+  const g=$("shopGrid");
+  [...g.children].forEach((b,i)=>{
+    const d=DECOS[i];
+    if(!game.deco.includes(d.id)) b.disabled=game.pts<d.cost;
+  });
+}
+function buyDeco(d){
+  if(game.deco.includes(d.id)||game.pts<d.cost)return;
+  game.pts-=d.cost; game.deco.push(d.id); saveGame();
+  showBanner(`${d.e} ${d.name} 설치 완료!`, "praise", 3000);
+  speak(`짠! ${d.name} 설치 완료! 센터가 더 예뻐졌어요!`, "chime");
+  renderShop(); renderCenter();
+}
+/* ───────── 화면 전환: 센터(홈) ↔ 포인트 모으기(플레이) ───────── */
+function showScreen(id){
+  $("homeScreen").classList.toggle("on", id==="home");
+  $("playScreen").classList.toggle("on", id==="play");
+  window.scrollTo({top:0});
+}
+$("goPlay").addEventListener("click", ()=>{
+  showScreen("play");
+  if(!running) btnStart.click();
+});
+$("goHome").addEventListener("click", ()=>{
+  if(running) btnStart.click();
+  showScreen("home");
+  renderCenter(); renderShop();
+});
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const host=document.createElement("div");
+  host.className="confetti"; document.body.appendChild(host);
+  const icons=["🎉","⭐","🌸","💚","✨","🍀"];
+  for(let i=0;i<36;i++){
+    const el=document.createElement("i");
+    el.textContent=icons[i%icons.length];
+    el.style.left=Math.random()*100+"vw";
+    el.style.fontSize=(16+Math.random()*16)+"px";
+    host.appendChild(el);
+    el.animate(
+      [{transform:"translateY(-40px) rotate(0deg)", opacity:1},
+       {transform:`translateY(105vh) rotate(${(Math.random()*2-1)*540}deg)`, opacity:0.9}],
+      {duration:1800+Math.random()*1600, delay:Math.random()*350, easing:"cubic-bezier(.2,.6,.4,1)"}
+    );
+  }
+  setTimeout(()=>host.remove(), 4200);
+}
+function addPts(n, line){
+  game.pts+=n; sessionPts+=n; encourageT=0; saveGame();
+  showBanner(`⭐ +${n}P — ${line}`, "praise", 3400);
+  speak(line, "chime");
+  renderCenter();
+}
+function checkChallenge(){
+  if(comboIdx<CHALLENGE.length){
+    const c=CHALLENGE[comboIdx];
+    if(streak>=c.t){
+      comboIdx++;
+      let bonus=c.p;
+      let line=(c.t>=60?"1분":c.t+"초")+` 성공! ${bonus}포인트!`;
+      if(!game.tut){ game.tut=true; bonus+=50; line=`튜토리얼 완료! 보너스까지 ${bonus}포인트!`; }
+      addPts(bonus, line);
+    }
+  } else {
+    const nextT = 60 + (comboIdx - CHALLENGE.length + 1) * 60;  /* 이후 1분마다 */
+    if(streak>=nextT){
+      comboIdx++;
+      addPts(60, `${Math.round(nextT/60)}분 연속! 60포인트!`);
+    }
+  }
+}
+
+/* ───────── 알림 발생 ───────── */
+function fire(rule){
+  rule.lastFire=performance.now(); rule.acc=0; hadIssue=true;
+  const line=pick(RULE_LINES[rule.id]);
+  speak(line, "beep");
+  showBanner(line, "bad", 4000);
+  const li=document.createElement("li");
+  const t=new Date();
+  li.innerHTML=`<time>${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}</time><span>${line}</span>`;
+  const empty=logEl.querySelector(".empty"); if(empty)empty.remove();
+  logEl.prepend(li);
+  while(logEl.children.length>8) logEl.lastChild.remove();
+}
+
+/* ───────── 프레임 처리 ───────── */
+/* ───────── 자동 기준 저장: 자세가 합격이면 셋-둘-하나-찰칵! ───────── */
+function cancelCountdown(sayIt){
+  if(cdT>=0){
+    cdT=-1; cdSpoken=-1; autoHold=0;
+    const now=performance.now();
+    if(sayIt && now-lastCancel>6000){
+      lastCancel=now;
+      showBanner("앗, 조금 움직였어요! 다시 자세를 잡아 봐요~", "bad", 2600);
+      speak("앗, 조금 움직였어요! 다시 자세를 잡아 봐요!");
+    }
+  }
+}
+async function doAutoCapture(){
+  showBanner("📸 찰칵! 기억하는 중…", "info", 1800);
+  speak("찰칵!", "chime");
+  const b=await captureOnce();
+  cdT=-1; cdSpoken=-1; autoHold=0;
+  if(!b) return;
+  if(gateCheck(b, settings.gate*1.15).length>0){
+    showBanner("조금 흔들렸어요. 다시 한번 자세를 잡아 봐요!", "bad", 2800);
+    return;
+  }
+  baselines[stance]=b;
+  rules.forEach(r=>{ r.acc=0; });
+  armedKey="";
+  const label=stance==="sit"?"앉은":"선";
+  showBanner(`✅ 합격! ${label} 자세를 기억했어요!`, "praise", 4000);
+  speak("합격이에요! 완벽한 자세를 기억할게요. 이제 함께 지켜봐요!", "chime");
+}
+function autoCalTick(m, dt){
+  if(scripting || calibrating) return;
+  const key=`${stance}|${view}`;
+  if(armedKey!==key){
+    armedKey=key; autoHold=0; cdT=-1; cdSpoken=-1;
+    waitT=0; bestScore=Infinity; bestM=null;
+    const label=stance==="sit"?"앉은":"선";
+    showBanner(`이제 ${label} 자세를 기억할 차례예요!`, "info", 3200);
+    speak(`이제 ${label} 자세를 기억할 차례예요! 바른 자세를 잡으면 자동으로 찰칵 할게요!`, "chime");
+    lastHint=performance.now();
+  }
+  waitT+=dt;
+  const sc=devScore(m);
+  if(sc<bestScore){ bestScore=sc; bestM={...m}; }
+  const fails=gateCheck({...m, view, stance}, settings.gate);
+  const now=performance.now();
+
+  if(cdT>=0){ /* 카운트다운 진행 중 — 미세한 흔들림은 봐줘요 */
+    const holdFails=gateCheck({...m, view, stance}, settings.gate*1.15);
+    if(holdFails.length>0){ cancelCountdown(true); }
+    else{
+      cdT+=dt;
+      const n=Math.floor(cdT);
+      if(n!==cdSpoken && n<3){
+        cdSpoken=n;
+        const word=["셋","둘","하나"][n];
+        showBanner(`그대로~ ${word}!`, "praise", 1100);
+        speak(word);
+      }
+      if(cdT>=3){ cdT=-1; doAutoCapture(); }
+    }
+    setState("good","그대로 멈춰요!","곧 찰칵 할 거예요 📸");
+    return;
+  }
+
+  if(fails.length===0){
+    autoHold+=dt;
+    setState("good","우와, 좋아요!","그대로만 있어 주세요…");
+    if(autoHold>=1.2){ cdT=0; cdSpoken=-1; }
+  } else {
+    autoHold=Math.max(0, autoHold-dt*2);
+    if(waitT>25 && bestM){ saveBest(); return; }  /* 오래 애썼다면 최선의 순간으로! */
+    const fix=GATE_FIX[fails[0]];
+    setState("info","바른 자세를 잡아 봐요!", fix);
+    if(now-lastHint>12000){
+      lastHint=now;
+      showBanner(`🔍 ${fix}`, "info", 3600);
+      speak(fix);
+    }
+  }
+}
+/* 합격은 못 했어도 — 관찰한 것 중 가장 예쁜 순간을 '오늘의 최선'으로 저장 */
+function saveBest(){
+  const b={};
+  for(const key of SMOOTH){ b[key]=bestM[key]; }
+  b.hipsOk=bestM.hipsOk; b.legsOk=bestM.legsOk;
+  b.view=view; b.stance=stance;
+  baselines[stance]=b;
+  rules.forEach(r=>{ r.acc=0; });
+  armedKey=""; waitT=0; bestM=null; bestScore=Infinity;
+  showBanner("💚 오늘의 최선 자세를 기억했어요!", "praise", 4200);
+  speak("괜찮아요! 지금까지 중에 가장 예쁜 자세를 기억했어요. 여기서부터 조금씩 좋아지면 돼요!", "chime");
+}
+
+function processFrame(lm, dt){
+  const m=smooth(computeMetrics(lm));
+  updateStanceView(m, dt);
+  diag.textContent=
+    `view=${view} stance=${stance} earShDx=${m.earShDx?.toFixed(3)} torsoDx=${m.torsoDx?.toFixed(3)} `+
+    `shift=${m.shift?.toFixed(3)} kAsym=${m.kneeAsym!=null?m.kneeAsym.toFixed(0):"-"} hDrop=${m.hipDrop!=null?m.hipDrop.toFixed(3):"-"} `+
+    `neck=${m.neck?.toFixed(3)} pitch=${m.pitch?.toFixed(3)} face=${m.faceRatio?.toFixed(3)} `+
+    `tilt=${m.tilt?.toFixed(1)} roll=${m.headRoll?.toFixed(1)} ank=${m.ankOrder?.toFixed(2)} knee=${m.kneeAngle?m.kneeAngle.toFixed(0):"-"}`;
+
+  if(calibrating){ if(calibBuf)calibBuf.push({...m}); return; }
+
+  const b=baselines[stance];
+  if(!b || b.view!==view){ autoCalTick(m, dt); return; }
+
+  const k=kOf();
+  const active=rules.filter(r=>r.when(m,b,k));
+  const now=performance.now();
+  for(const r of rules){
+    if(active.includes(r)){
+      r.acc+=dt;
+      if(r.acc>=settings.sustain && now-r.lastFire>settings.cooldown*1000) fire(r);
+    } else r.acc=Math.max(0, r.acc-dt*2);
+  }
+
+  if(active.length===0){
+    sessionGood+=dt; game.tg+=dt; game.pts+=dt/5; streak+=dt; badHold=0;
+    goodHold+=dt; encourageT+=dt;
+    if(hadIssue && goodHold>=2){
+      hadIssue=false; encourageT=0;
+      const line=pick(RECOVER_LINES);
+      showBanner(`💚 ${line}`, "praise", 3000);
+      speak(line, "chime");
+    } else if(encourageT>=45){
+      encourageT=0;
+      speak(pick(ENCOURAGE_LINES));
+    }
+    checkChallenge();
+    setState("good","참 잘하고 있어요!","바른 자세 유지 중 — 포인트가 쌓여요 ⭐");
+  } else {
+    badHold+=dt; goodHold=0;
+    if(badHold>1.5){ streak=0; comboIdx=0; hadIssue=true; }
+    setState("bad","자세를 고쳐 볼까요?", active.length>1?`고칠 곳이 ${active.length}군데 있어요`:"코치의 말을 들어 보세요!");
+  }
+}
+function noPerson(){
+  cancelCountdown(false); autoHold=0;
+  setState("info","어디 갔어요~?","몸이 화면에 보이게 해 주세요!");
+  diag.textContent="관절 미검출";
+}
+
+/* ───────── 그리기 (옆모습이면 다림줄도 함께) ───────── */
+let du=null;
+function draw(result, ok){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!result||!result.landmarks||!result.landmarks[0])return;
+  du=du||new DrawingUtils(ctx);
+  const color=ok?"#6BD8A8":"#FF8B7A";
+  du.drawConnectors(result.landmarks[0], PoseLandmarker.POSE_CONNECTIONS, {color, lineWidth:3});
+  du.drawLandmarks(result.landmarks[0], {color:"#FFFFFF", radius:2.5});
+  if(view==="side" && ema && ema.anchorX!=null){
+    const x=ema.anchorX*canvas.width;
+    ctx.save();
+    ctx.setLineDash([12,10]);
+    ctx.strokeStyle="rgba(255,255,255,0.75)";
+    ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
+    ctx.setLineDash([]);
+    for(const p of [ema.earC, ema.shC, ema.hipC]){
+      if(!p)continue;
+      ctx.beginPath();
+      ctx.arc(p.x*canvas.width, p.y*canvas.height, 9, 0, Math.PI*2);
+      ctx.fillStyle = ok ? "rgba(107,216,168,0.9)" : "rgba(255,139,122,0.9)";
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/* ───────── 메인 루프 ───────── */
+function loop(){
+  if(!running)return;
+  const now=performance.now();
+  const dt=Math.min((now-lastFrameT)/1000, 0.2);
+  lastFrameT=now;
+  if(video.readyState>=2 && landmarker){
+    let result=null;
+    try{ result=landmarker.detectForVideo(video, now); }catch(e){}
+    if(result&&result.landmarks&&result.landmarks[0]){
+      processFrame(result.landmarks[0], dt);
+      draw(result, !stage.classList.contains("bad"));
+    } else { noPerson(); ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ───────── 모델 & 카메라 ───────── */
+async function ensureModel(){
+  if(landmarker)return;
+  setState("info","AI 코치가 오고 있어요…","첫 만남에만 몇 초 걸려요!");
+  const files=await FilesetResolver.forVisionTasks(WASM);
+  const opts=d=>({baseOptions:{modelAssetPath:MODEL, delegate:d}, runningMode:"VIDEO", numPoses:1});
+  try{ landmarker=await PoseLandmarker.createFromOptions(files, opts("GPU")); }
+  catch(e){ landmarker=await PoseLandmarker.createFromOptions(files, opts("CPU")); }
+}
+async function startCamera(){
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  stream=await navigator.mediaDevices.getUserMedia({
+    video:{facingMode:facing, width:{ideal:1280}, height:{ideal:720}}, audio:false
+  });
+  video.srcObject=stream;
+  await video.play();
+  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+  const mirror=facing==="user";
+  video.classList.toggle("mirror",mirror);
+  canvas.classList.toggle("mirror",mirror);
+}
+async function grabWakeLock(){ try{ wakeLock=await navigator.wakeLock.request("screen"); }catch(e){} }
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState==="hidden") saveGame();
+  else if(running) grabWakeLock();
+});
+window.addEventListener("pagehide", saveGame);
+
+function cameraError(e){
+  let msg="카메라를 열 수 없어요.";
+  if(e&&e.name==="NotAllowedError") msg="카메라 사용을 허락해 주세요! 브라우저 설정에서 카메라를 켤 수 있어요.";
+  else if(e&&e.name==="NotFoundError") msg="사용할 수 있는 카메라가 없어요.";
+  else msg="여기서는 카메라를 열 수 없어요. GitHub Pages 주소나 PC 크롬에서 열어 주세요!";
+  placeholder.style.display="flex";
+  placeholder.innerHTML=`<div class="big">🙈</div><h2>카메라 연결이 안 돼요</h2><p>${msg}</p>`;
+  setState("info","카메라 연결 실패","");
+}
+
+/* ───────── 시작/정지 ───────── */
+btnStart.addEventListener("click", async ()=>{
+  if(running){
+    running=false; saveGame();
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    if(wakeLock){ try{ wakeLock.release(); }catch(e){} wakeLock=null; }
+    streak=0; badHold=0; comboIdx=0; goodHold=0; encourageT=0; hadIssue=false;
+    btnStart.textContent="시작"; btnStart.classList.remove("stop");
+    btnCalib.disabled=true; btnFlip.disabled=true;
+    pill.textContent="쉬는 중"; pill.classList.remove("on");
+    setState("info","잠깐 쉬어 가요","시작을 누르면 다시 함께해요!");
+    return;
+  }
+  btnStart.disabled=true;
+  try{
+    await ensureModel();
+    await startCamera();
+  }catch(e){ cameraError(e); btnStart.disabled=false; return; }
+  placeholder.style.display="none";
+  running=true; lastFrameT=performance.now();
+  btnStart.textContent="정지"; btnStart.classList.add("stop"); btnStart.disabled=false;
+  btnCalib.disabled=false; btnFlip.disabled=false;
+  pill.textContent="함께하는 중"; pill.classList.add("on");
+  grabWakeLock();
+  ensureAudio();
+  speak(pick(GREETINGS), "chime");
+  const b=baselines[stance];
+  setState(b?"good":"info", b?"관찰 시작!":"자세를 기억할 준비!",
+           b?"":"바른 자세를 잡으면 자동으로 찰칵!");
+  requestAnimationFrame(loop);
+});
+
+btnFlip.addEventListener("click", async ()=>{
+  facing = facing==="user" ? "environment" : "user";
+  try{ await startCamera(); }catch(e){ cameraError(e); }
+});
+
+/* ───────── 앉기/서기 직접 선택 ───────── */
+function setStance(s){
+  if(stance===s) return;
+  stance=s;
+  modeSit.classList.toggle("on", s==="sit");
+  modeStand.classList.toggle("on", s==="stand");
+  cancelCountdown(false); armedKey=""; autoHold=0;
+  rules.forEach(r=>{ r.acc=0; });
+  if(running){
+    const b=baselines[s];
+    if(b && b.view===view){
+      speak(s==="sit" ? "앉은 자세를 지켜볼게요!" : "선 자세를 지켜볼게요!", "chime");
+    }
+    /* 기준이 없으면 자동 저장 모드가 알아서 안내해요 */
+  }
+}
+modeSit.addEventListener("click", ()=>setStance("sit"));
+modeStand.addEventListener("click", ()=>setStance("stand"));
+
+/* ───────── 기준 저장: 안내 → 촬영 → 합격 검사 → (불합격 시 재도전) ───────── */
+async function captureOnce(){
+  calibrating=true; calibBuf=[];
+  await sleep(1500);
+  calibrating=false;
+  if(!calibBuf || calibBuf.length<5){ calibBuf=null; return null; }
+  const b={};
+  for(const key of SMOOTH){
+    const vals=calibBuf.map(s=>s[key]).filter(v=>v!=null);
+    b[key]=vals.length ? vals.reduce((a,c)=>a+c,0)/vals.length : null;
+  }
+  b.hipsOk = calibBuf.filter(s=>s.hipsOk).length > calibBuf.length/2;
+  b.legsOk = calibBuf.filter(s=>s.legsOk).length > calibBuf.length/2;
+  b.view=view; b.stance=stance;
+  calibBuf=null;
+  return b;
+}
+/* ───────── '자세 연습' 버튼: 차근차근 안내 후 자동 찰칵 대기 ───────── */
+btnCalib.addEventListener("click", async ()=>{
+  if(!running||calibrating||scripting)return;
+  btnCalib.disabled=true; scripting=true;
+  baselines[stance]=null; armedKey=""; cancelCountdown(false);
+  const script = stance==="sit" ? CAL_SIT : CAL_STAND;
+  for(let i=0;i<script.length;i++){
+    showBanner(script[i], "info", 2600);
+    speak(script[i], i===0?"chime":null);
+    await sleep(i===script.length-1 ? 1400 : 2700);
+  }
+  scripting=false;
+  armedKey=`${stance}|${view}`;
+  lastHint=performance.now();
+  showBanner("이제 그대로~ 자세가 예쁘면 자동으로 찰칵 할게요!", "info", 3600);
+  speak("이제 그대로! 자세가 예쁘면 자동으로 찰칵 할게요!");
+  btnCalib.disabled=false;
+});
+
+/* ───────── 설정 UI (저장하지 않아요) ───────── */
+function bindRange(id, outId, field, suffix){
+  const el=$(id), out=$(outId);
+  el.value=settings[field];
+  out.textContent=settings[field]+(suffix||"");
+  el.addEventListener("input", ()=>{
+    settings[field]=Number(el.value);
+    out.textContent=el.value+(suffix||"");
+  });
+}
+bindRange("setSens","outSens","sens","");
+const GATE_LEVELS={ gateStrict:1.0, gateNormal:1.35, gateEasy:1.8 };
+for(const gid of Object.keys(GATE_LEVELS)){
+  $(gid).addEventListener("click", ()=>{
+    settings.gate=GATE_LEVELS[gid];
+    for(const j of Object.keys(GATE_LEVELS)) $(j).classList.toggle("on", j===gid);
+  });
+}
+bindRange("setSustain","outSustain","sustain","초");
+bindRange("setCooldown","outCooldown","cooldown","초");
+$("setVoice").checked=settings.voice;
+$("setVoice").addEventListener("change", e=>{ settings.voice=e.target.checked; });
+$("btnTestVoice").addEventListener("click", ()=>{ ensureAudio(); speak("안녕하세요! 등을 쭉 펴 볼까요?", "chime"); });
+$("btnResetScore").addEventListener("click", ()=>{
+  if(!confirm("정말 센터를 처음부터 다시 지을까요? 포인트와 건물이 모두 사라져요!"))return;
+  game={ pts:0, stage:0, tg:0, tut:false, deco:[] };
+  sessionGood=0; sessionPts=0; streak=0; comboIdx=0; goodHold=0; encourageT=0; hadIssue=false;
+  saveGame(); renderCenter();
+  showBanner("빈 터에 첫 매트를 깔았어요! 다시 시작해요 🧘", "info");
+});
+
+/* ───────── 1초 통계 갱신 & 주기 저장 ───────── */
+setInterval(()=>{
+  $("statSession").textContent=fmtMS(sessionGood);
+  $("statStars").textContent="+"+Math.floor(sessionPts)+"P";
+  $("statStreak").textContent=streak>=60?fmtMS(streak):Math.floor(streak)+"초";
+  $("ptsMini").textContent=Math.floor(game.pts).toLocaleString()+"P";
+  updateShopStates();
+  renderCenter();
+}, 1000);
+setInterval(()=>{ if(running)saveGame(); }, 20000);
+
+renderCenter();
+renderShop();
+try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){}
+</script>
+</body>
+</html>
