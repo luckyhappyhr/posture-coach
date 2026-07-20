@@ -48,6 +48,21 @@
   .basementF{ background:#EFEAE2; border-style:dashed; opacity:.95; margin-top:6px; margin-bottom:12px; }
   .centerDesc{ font-size:12.5px; color:var(--muted); font-family:var(--sans); font-weight:600; margin-left:8px; }
   .pts{ color:var(--green); font-family:var(--jua); }
+  .screen{ display:none; }
+  .screen.on{ display:block; }
+  .cta{ width:100%; margin-top:12px; font-size:18px; padding:16px; }
+  .playTop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .playTop button{ font-size:14px; padding:10px 14px; border-radius:12px; }
+  .playTop .pts{ font-size:17px; }
+  .yard{ font-size:20px; letter-spacing:3px; margin-top:4px; }
+  .centerScene.glow{ box-shadow:0 0 0 3px #FFE7A8, 0 6px 18px rgba(255,201,77,.35); border-color:var(--sun); }
+  .shopGrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .shopItem{ display:flex; align-items:center; gap:8px; padding:10px; border-radius:12px; }
+  .shopItem .se{ font-size:22px; }
+  .shopItem .sn{ flex:1; text-align:left; font-family:var(--sans); font-weight:700; font-size:13px; }
+  .shopItem .sc{ font-family:var(--jua); font-size:12.5px; color:var(--green); }
+  .shopItem.owned{ background:var(--green-soft); border-color:var(--green); opacity:.85; }
+  .shopItem.owned .sc{ color:var(--muted); }
 
   .stage{ position:relative; width:100%; aspect-ratio:3/4; max-height:60vh; background:#0d1712; border-radius:24px; overflow:hidden; outline:5px solid var(--line); outline-offset:-5px; transition:outline-color .35s ease; }
   @media (min-width:560px){ .stage{ aspect-ratio:4/3; } }
@@ -138,12 +153,14 @@
   <div class="pill" id="pillState">쉬는 중</div>
 </header>
 
+<div class="screen on" id="homeScreen">
 <div class="hero" style="flex-direction:column; align-items:stretch; gap:10px;">
-  <div class="centerScene">
-    <div class="sky">⛅ ☁️</div>
+  <div class="centerScene" id="scene">
+    <div class="sky" id="skyRow">⛅ ☁️</div>
     <div class="roofSign" id="roofSign">🏥 바른자세 헬스케어센터</div>
     <div id="floors"></div>
     <div class="ground"></div>
+    <div class="yard" id="yard" style="display:none"></div>
     <div class="floor basementF" id="basement">🧘</div>
   </div>
   <div class="heroBody">
@@ -152,6 +169,23 @@
     <div class="heroNext"><span id="upgradeHint">바른 자세로 포인트를 모아요!</span> · 보유 <b id="ptsNow" class="pts">0P</b></div>
   </div>
   <button class="primary" id="upgradeBtn" style="display:none">🔨 확장</button>
+</div>
+
+<details class="card" open>
+  <summary>🛍️ 꾸미기 상점 <span id="shopCount" class="centerDesc"></span></summary>
+  <div class="cardBody">
+    <div class="shopGrid" id="shopGrid"></div>
+    <div class="heroNext">아이템을 사면 센터 그림에 바로 나타나요!</div>
+  </div>
+</details>
+
+<button class="primary cta" id="goPlay">🏃 포인트 모으러 가기</button>
+</div><!-- /homeScreen -->
+
+<div class="screen" id="playScreen">
+<div class="playTop">
+  <button id="goHome">🏠 센터로 돌아가기</button>
+  <span class="pts" id="ptsMini">0P</span>
 </div>
 
 <div class="stage info" id="stage">
@@ -284,7 +318,9 @@
   </div>
 </details>
 
-<p class="foot">카메라 영상과 자세 정보는 어디에도 저장·전송되지 않아요.<br>기기에는 <b>센터 진행상황(포인트·건물 단계·누적 시간)</b>만 남아요. 🏢</p>
+</div><!-- /playScreen -->
+
+<p class="foot">카메라 영상과 자세 정보는 어디에도 저장·전송되지 않아요.<br>기기에는 <b>센터 진행상황(포인트·건물 단계·꾸미기·누적 시간)</b>만 남아요. 🏢</p>
 
 <script type="module">
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
@@ -313,7 +349,33 @@ const STAGES = [
   { cost:1600, name:"1층 넓은 교실",        desc:"소문 듣고 수강생이 늘었어요",    floors:["🧍🧍🧍🧍🧍🚪"],                                 basement:"🧘🪞" },
   { cost:3000, name:"2층 스튜디오",         desc:"요가·스트레칭 반 개설!",        floors:["🤸🧘🧎","🧍🧍🧍🧍🚪"],                          basement:"📦🧘" },
   { cost:5000, name:"3층 필라테스관",       desc:"기구 필라테스까지 들어왔어요!",  floors:["🧘‍♀️🛠️🧘","🤸🧎🧍","🧍🧍🧍🧍🚪"],               basement:"📦" },
-  { cost:8000, name:"바른자세 헬스케어센터", desc:"건물 전체가 우리 센터! 완공!",  floors:["🌳🪴☀️","💆🧘‍♀️🧘","🤸🧎🧍🧍","🧍🧍🧍🧍🚪"],    basement:"🏋️" },
+];
+/* ───────── 꾸미기 아이템 (센터 그림에 바로 나타나요) ───────── */
+const DECOS = [
+  { id:"pot",     e:"🪴", name:"화분",          cost:50,  slot:"room" },
+  { id:"frame",   e:"🖼️", name:"액자",          cost:80,  slot:"room" },
+  { id:"balloon", e:"🎈", name:"풍선",          cost:100, slot:"sky"  },
+  { id:"mirror",  e:"🪞", name:"큰 거울",       cost:120, slot:"room" },
+  { id:"dog",     e:"🐕", name:"강아지 손님",   cost:150, slot:"yard" },
+  { id:"flower",  e:"🌷", name:"꽃밭",          cost:200, slot:"yard" },
+  { id:"bike",    e:"🚲", name:"자전거 거치대", cost:250, slot:"yard" },
+  { id:"cafe",    e:"☕", name:"웰컴 카페",     cost:300, slot:"yard" },
+  { id:"cat",     e:"🐈", name:"고양이 직원",   cost:400, slot:"yard" },
+  { id:"lights",  e:"✨", name:"반짝 조명",     cost:500, slot:"frame"},
+  { id:"fountain",e:"⛲", name:"미니 분수",     cost:600, slot:"yard" },
+  { id:"rainbow", e:"🌈", name:"무지개 깃발",   cost:800, slot:"sky"  },
+];
+/* ───────── 긍정 피드백 멘트 ───────── */
+const RECOVER_LINES = [
+  "좋아졌어요! 바로 그 자세예요!",
+  "우와, 금방 고쳤네요! 정말 멋져요!",
+  "그렇죠! 등이 쭉 펴졌어요, 최고예요!",
+];
+const ENCOURAGE_LINES = [
+  "좋아요, 계속 유지해 보아요!",
+  "바른 자세예요! 정말 멋져요!",
+  "이 느낌 그대로! 아주 좋아요!",
+  "허리가 꼿꼿! 오늘도 최고예요!",
 ];
 
 /* ───────── 귀여운 멘트 ───────── */
@@ -405,15 +467,15 @@ const GATE_FIX = {
 function loadGame(){
   try{
     const d=JSON.parse(localStorage.getItem(KEY)||"null");
-    if(d) return { pts:Math.max(0,+d.pts||0), stage:Math.min(STAGES.length-1, Math.max(0,+d.stage||0)), tg:Math.max(0,+d.tg||0), tut:!!d.tut };
+    if(d) return { pts:Math.max(0,+d.pts||0), stage:Math.min(STAGES.length-1, Math.max(0,+d.stage||0)), tg:Math.max(0,+d.tg||0), tut:!!d.tut, deco:Array.isArray(d.deco)?d.deco.filter(x=>DECOS.some(k=>k.id===x)):[] };
   }catch(e){}
   try{ /* 예전 '자세나무' 기록이 있으면 포인트로 이사와요 */
     const old=Math.max(0, Number(JSON.parse(localStorage.getItem(OLD_KEY)||"0"))||0);
-    if(old>0) return { pts:Math.floor(old/5), stage:0, tg:old, tut:true };
+    if(old>0) return { pts:Math.floor(old/5), stage:0, tg:old, tut:true, deco:[] };
   }catch(e){}
-  return { pts:0, stage:0, tg:0, tut:false };
+  return { pts:0, stage:0, tg:0, tut:false, deco:[] };
 }
-function saveGame(){ try{ localStorage.setItem(KEY, JSON.stringify({ pts:Math.floor(game.pts), stage:game.stage, tg:Math.round(game.tg), tut:game.tut })); }catch(e){} }
+function saveGame(){ try{ localStorage.setItem(KEY, JSON.stringify({ pts:Math.floor(game.pts), stage:game.stage, tg:Math.round(game.tg), tut:game.tut, deco:game.deco })); }catch(e){} }
 
 /* ───────── 상태 ───────── */
 const settings = { sens:5, sustain:2, cooldown:15, voice:true, gate:1.35 };
@@ -428,6 +490,7 @@ let ema=null, lastFrameT=0, calibrating=false, calibBuf=null;
 let scripting=false, autoHold=0, cdT=-1, cdSpoken=-1, lastHint=0, lastCancel=0, armedKey="";
 let waitT=0, bestScore=Infinity, bestM=null;
 let sessionGood=0, streak=0, badHold=0, comboIdx=0, bannerTimer=0;
+let goodHold=0, encourageT=0, hadIssue=false;
 
 /* ───────── 엘리먼트 ───────── */
 const $ = id => document.getElementById(id);
@@ -618,7 +681,11 @@ function renderCenter(){
     fl.innerHTML="";
     s.floors.forEach(f=>{ const d=document.createElement("div"); d.className="floor pop"; d.textContent=f; fl.appendChild(d); });
   }
-  $("basement").textContent=s.basement;
+  const dOwn=slot=>DECOS.filter(d=>d.slot===slot&&game.deco.includes(d.id)).map(d=>d.e).join("");
+  $("basement").textContent=s.basement+dOwn("room");
+  $("skyRow").textContent=(dOwn("sky")?dOwn("sky")+"  ":"")+"⛅ ☁️";
+  const y=dOwn("yard"); $("yard").textContent=y; $("yard").style.display=y?"":"none";
+  $("scene").classList.toggle("glow", game.deco.includes("lights"));
   $("roofSign").style.display = game.stage===STAGES.length-1 ? "block" : "none";
   const btn=$("upgradeBtn");
   if(n){
@@ -643,6 +710,49 @@ $("upgradeBtn").addEventListener("click", ()=>{
   speak(`공사 완료! ${n.name}까지 커졌어요! 수강생들이 정말 좋아해요!`, "fanfare");
   renderCenter();
 });
+/* ───────── 꾸미기 상점 ───────── */
+function renderShop(){
+  const g=$("shopGrid"); g.innerHTML="";
+  DECOS.forEach(d=>{
+    const own=game.deco.includes(d.id);
+    const b=document.createElement("button");
+    b.className="shopItem"+(own?" owned":"");
+    b.innerHTML=`<span class="se">${d.e}</span><span class="sn">${d.name}</span><span class="sc">${own?"보유중 ✓":d.cost.toLocaleString()+"P"}</span>`;
+    b.disabled=own||game.pts<d.cost;
+    b.addEventListener("click", ()=>buyDeco(d));
+    g.appendChild(b);
+  });
+  $("shopCount").textContent=`(${game.deco.length}/${DECOS.length})`;
+}
+function updateShopStates(){
+  const g=$("shopGrid");
+  [...g.children].forEach((b,i)=>{
+    const d=DECOS[i];
+    if(!game.deco.includes(d.id)) b.disabled=game.pts<d.cost;
+  });
+}
+function buyDeco(d){
+  if(game.deco.includes(d.id)||game.pts<d.cost)return;
+  game.pts-=d.cost; game.deco.push(d.id); saveGame();
+  showBanner(`${d.e} ${d.name} 설치 완료!`, "praise", 3000);
+  speak(`짠! ${d.name} 설치 완료! 센터가 더 예뻐졌어요!`, "chime");
+  renderShop(); renderCenter();
+}
+/* ───────── 화면 전환: 센터(홈) ↔ 포인트 모으기(플레이) ───────── */
+function showScreen(id){
+  $("homeScreen").classList.toggle("on", id==="home");
+  $("playScreen").classList.toggle("on", id==="play");
+  window.scrollTo({top:0});
+}
+$("goPlay").addEventListener("click", ()=>{
+  showScreen("play");
+  if(!running) btnStart.click();
+});
+$("goHome").addEventListener("click", ()=>{
+  if(running) btnStart.click();
+  showScreen("home");
+  renderCenter(); renderShop();
+});
 function confetti(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const host=document.createElement("div");
@@ -663,7 +773,7 @@ function confetti(){
   setTimeout(()=>host.remove(), 4200);
 }
 function addPts(n, line){
-  game.pts+=n; sessionPts+=n; saveGame();
+  game.pts+=n; sessionPts+=n; encourageT=0; saveGame();
   showBanner(`⭐ +${n}P — ${line}`, "praise", 3400);
   speak(line, "chime");
   renderCenter();
@@ -689,7 +799,7 @@ function checkChallenge(){
 
 /* ───────── 알림 발생 ───────── */
 function fire(rule){
-  rule.lastFire=performance.now(); rule.acc=0;
+  rule.lastFire=performance.now(); rule.acc=0; hadIssue=true;
   const line=pick(RULE_LINES[rule.id]);
   speak(line, "beep");
   showBanner(line, "bad", 4000);
@@ -821,11 +931,21 @@ function processFrame(lm, dt){
 
   if(active.length===0){
     sessionGood+=dt; game.tg+=dt; game.pts+=dt/5; streak+=dt; badHold=0;
+    goodHold+=dt; encourageT+=dt;
+    if(hadIssue && goodHold>=2){
+      hadIssue=false; encourageT=0;
+      const line=pick(RECOVER_LINES);
+      showBanner(`💚 ${line}`, "praise", 3000);
+      speak(line, "chime");
+    } else if(encourageT>=45){
+      encourageT=0;
+      speak(pick(ENCOURAGE_LINES));
+    }
     checkChallenge();
     setState("good","참 잘하고 있어요!","바른 자세 유지 중 — 포인트가 쌓여요 ⭐");
   } else {
-    badHold+=dt;
-    if(badHold>1.5){ streak=0; comboIdx=0; }
+    badHold+=dt; goodHold=0;
+    if(badHold>1.5){ streak=0; comboIdx=0; hadIssue=true; }
     setState("bad","자세를 고쳐 볼까요?", active.length>1?`고칠 곳이 ${active.length}군데 있어요`:"코치의 말을 들어 보세요!");
   }
 }
@@ -924,7 +1044,7 @@ btnStart.addEventListener("click", async ()=>{
     running=false; saveGame();
     if(stream)stream.getTracks().forEach(t=>t.stop());
     if(wakeLock){ try{ wakeLock.release(); }catch(e){} wakeLock=null; }
-    streak=0; badHold=0; comboIdx=0;
+    streak=0; badHold=0; comboIdx=0; goodHold=0; encourageT=0; hadIssue=false;
     btnStart.textContent="시작"; btnStart.classList.remove("stop");
     btnCalib.disabled=true; btnFlip.disabled=true;
     pill.textContent="쉬는 중"; pill.classList.remove("on");
@@ -1035,8 +1155,8 @@ $("setVoice").addEventListener("change", e=>{ settings.voice=e.target.checked; }
 $("btnTestVoice").addEventListener("click", ()=>{ ensureAudio(); speak("안녕하세요! 등을 쭉 펴 볼까요?", "chime"); });
 $("btnResetScore").addEventListener("click", ()=>{
   if(!confirm("정말 센터를 처음부터 다시 지을까요? 포인트와 건물이 모두 사라져요!"))return;
-  game={ pts:0, stage:0, tg:0, tut:false };
-  sessionGood=0; sessionPts=0; streak=0; comboIdx=0;
+  game={ pts:0, stage:0, tg:0, tut:false, deco:[] };
+  sessionGood=0; sessionPts=0; streak=0; comboIdx=0; goodHold=0; encourageT=0; hadIssue=false;
   saveGame(); renderCenter();
   showBanner("빈 터에 첫 매트를 깔았어요! 다시 시작해요 🧘", "info");
 });
@@ -1046,11 +1166,14 @@ setInterval(()=>{
   $("statSession").textContent=fmtMS(sessionGood);
   $("statStars").textContent="+"+Math.floor(sessionPts)+"P";
   $("statStreak").textContent=streak>=60?fmtMS(streak):Math.floor(streak)+"초";
+  $("ptsMini").textContent=Math.floor(game.pts).toLocaleString()+"P";
+  updateShopStates();
   renderCenter();
 }, 1000);
 setInterval(()=>{ if(running)saveGame(); }, 20000);
 
 renderCenter();
+renderShop();
 try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){}
 </script>
 </body>
